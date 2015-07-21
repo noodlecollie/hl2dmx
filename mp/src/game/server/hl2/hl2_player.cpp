@@ -413,10 +413,12 @@ CHL2_Player::CHL2_Player()
 #endif
 
 void callback_sv_sprint( IConVar *var, const char *pOldValue, float flOldValue );
-ConVar sv_sprint_drain_rate("sv_sprint_drain_rate", STR_SPRINT_DRAIN_RATE, FCVAR_ARCHIVE, "Drain rate of sprint, in energy units per second.", true, 0, false, 0, &callback_sv_sprint);
+ConVar mp_sprint_drain_rate("mp_sprint_drain_rate", STR_SPRINT_DRAIN_RATE, FCVAR_ARCHIVE | FCVAR_SERVER_CAN_EXECUTE | FCVAR_NOTIFY,
+	"Drain rate of sprint, in energy units per second.", true, 0, false, 0, &callback_sv_sprint);
 
 void callback_sv_flashlight( IConVar *var, const char *pOldValue, float flOldValue );
-ConVar sv_flashlight_drain_rate("sv_flashlight_drain_rate", STR_FLASHLIGHT_DRAIN_RATE, FCVAR_ARCHIVE, "Drain rate of flashlight, in energy units per second.", true, 0, false, 0, &callback_sv_flashlight);
+ConVar mp_flashlight_drain_rate("mp_flashlight_drain_rate", STR_FLASHLIGHT_DRAIN_RATE, FCVAR_ARCHIVE | FCVAR_SERVER_CAN_EXECUTE | FCVAR_NOTIFY,
+	"Drain rate of flashlight, in energy units per second.", true, 0, false, 0, &callback_sv_flashlight);
 ///////////////////////
 
 //
@@ -431,13 +433,17 @@ ConVar sv_flashlight_drain_rate("sv_flashlight_drain_rate", STR_FLASHLIGHT_DRAIN
 	CSuitPowerDevice SuitDeviceSprint( bits_SUIT_DEVICE_SPRINT, 12.5f );				// 100 units in 8 seconds
 #endif
 */
-CSuitPowerDevice SuitDeviceSprint( bits_SUIT_DEVICE_SPRINT, sv_sprint_drain_rate.GetFloat() );
+CSuitPowerDevice SuitDeviceSprint( bits_SUIT_DEVICE_SPRINT, mp_sprint_drain_rate.GetFloat() );
 
+/*
 #ifdef HL2_EPISODIC
 	CSuitPowerDevice SuitDeviceFlashlight( bits_SUIT_DEVICE_FLASHLIGHT, 1.111 );	// 100 units in 90 second
 #else
 	CSuitPowerDevice SuitDeviceFlashlight( bits_SUIT_DEVICE_FLASHLIGHT, 2.222 );	// 100 units in 45 second
 #endif
+*/
+CSuitPowerDevice SuitDeviceFlashlight( bits_SUIT_DEVICE_FLASHLIGHT, mp_flashlight_drain_rate.GetFloat() );
+
 CSuitPowerDevice SuitDeviceBreather( bits_SUIT_DEVICE_BREATHER, 6.7f );		// 100 units in 15 seconds (plus three padded seconds)
 
 ///////////////////////
@@ -447,13 +453,13 @@ CSuitPowerDevice SuitDeviceBreather( bits_SUIT_DEVICE_BREATHER, 6.7f );		// 100 
 void callback_sv_sprint( IConVar *var, const char *pOldValue, float flOldValue )
 {
 	// We need to recreate SuitDeviceSprint with the new value.
-	SuitDeviceSprint = CSuitPowerDevice( bits_SUIT_DEVICE_SPRINT, sv_sprint_drain_rate.GetFloat() );
+	SuitDeviceSprint = CSuitPowerDevice( bits_SUIT_DEVICE_SPRINT, mp_sprint_drain_rate.GetFloat() );
 }
 
 void callback_sv_flashlight( IConVar *var, const char *pOldValue, float flOldValue )
 {
 	// We need to recreate SuitDeviceFlashlight with the new value.
-	SuitDeviceFlashlight = CSuitPowerDevice( bits_SUIT_DEVICE_SPRINT, sv_flashlight_drain_rate.GetFloat() );
+	SuitDeviceFlashlight = CSuitPowerDevice( bits_SUIT_DEVICE_SPRINT, mp_flashlight_drain_rate.GetFloat() );
 }
 
 ///////////////////////

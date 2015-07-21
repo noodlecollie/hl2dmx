@@ -82,6 +82,10 @@ bool g_bMovementOptimizations = true;
 
 extern IGameMovement *g_pGameMovement;
 
+// NEW: Allow holding down space to let the player jump as soon as they hit the ground.
+ConVar mp_allow_quick_jump( "mp_allow_quick_jump", "0", FCVAR_ARCHIVE | FCVAR_SERVER_CAN_EXECUTE | FCVAR_NOTIFY,
+	"If set, players can hold down the space bar to jump continuously." );	
+
 #if defined( PLAYER_GETTING_STUCK_TESTING )
 
 // If you ever get stuck walking around, then you can run this code to find the code which would leave the player in a bad spot
@@ -2404,7 +2408,7 @@ bool CGameMovement::CheckJumpButton( void )
 		return false;
 #endif
 
-	if ( mv->m_nOldButtons & IN_JUMP )
+	if ( !mp_allow_quick_jump.GetBool() && mv->m_nOldButtons & IN_JUMP )
 		return false;		// don't pogo stick
 
 	// Cannot jump will in the unduck transition.
