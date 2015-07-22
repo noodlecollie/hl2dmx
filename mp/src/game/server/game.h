@@ -23,6 +23,7 @@ extern ConVar	lservercfgfile;
 extern ConVar	teamplay;
 extern ConVar	fraglimit;
 extern ConVar	falldamage;
+extern ConVar	falldamageconstant;
 extern ConVar	weaponstay;
 extern ConVar	forcerespawn;
 extern ConVar	footsteps;
@@ -33,6 +34,8 @@ extern ConVar	teamlist;
 extern ConVar	teamoverride;
 extern ConVar	defaultteam;
 extern ConVar	allowNPCs;
+
+extern ConVar mp_allow_quick_jump;
 
 extern ConVar	suitvolume;
 

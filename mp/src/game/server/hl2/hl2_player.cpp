@@ -413,11 +413,11 @@ CHL2_Player::CHL2_Player()
 #endif
 
 void callback_sv_sprint( IConVar *var, const char *pOldValue, float flOldValue );
-ConVar mp_sprint_drain_rate("mp_sprint_drain_rate", STR_SPRINT_DRAIN_RATE, FCVAR_ARCHIVE | FCVAR_SERVER_CAN_EXECUTE | FCVAR_NOTIFY,
+ConVar mp_sprint_drain_rate("mp_sprint_drain_rate", STR_SPRINT_DRAIN_RATE, FCVAR_NOTIFY,
 	"Drain rate of sprint, in energy units per second.", true, 0, false, 0, &callback_sv_sprint);
 
 void callback_sv_flashlight( IConVar *var, const char *pOldValue, float flOldValue );
-ConVar mp_flashlight_drain_rate("mp_flashlight_drain_rate", STR_FLASHLIGHT_DRAIN_RATE, FCVAR_ARCHIVE | FCVAR_SERVER_CAN_EXECUTE | FCVAR_NOTIFY,
+ConVar mp_flashlight_drain_rate("mp_flashlight_drain_rate", STR_FLASHLIGHT_DRAIN_RATE, FCVAR_NOTIFY,
 	"Drain rate of flashlight, in energy units per second.", true, 0, false, 0, &callback_sv_flashlight);
 ///////////////////////
 
