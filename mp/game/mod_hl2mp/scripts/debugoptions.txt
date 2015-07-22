@@ -1,0 +1,563 @@
+DebugMenu
+{
+	"width"		"620"
+	"height"	"300"
+
+	General
+	{
+		"Developer"
+		{
+			"incrementcvar"	"developer 0 2 1"
+		}
+		"host_timescale small"
+		{
+			"incrementcvar"	"host_timescale 0 1 0.2"
+		}
+		"host_timescale large"
+		{
+			"incrementcvar"	"host_timescale 1 10 3"
+		}
+		"Stop time"
+		{
+			"command" 	"host_timescale 0"
+		}
+		"Resume time"
+		{
+			"command" 	"host_timescale 1"
+		}
+		"Buddha"
+		{
+			"command" 	"buddha"
+		}
+		"Noclip speed"
+		{
+			"incrementcvar"	"sv_noclipspeed 5 40 10"
+		}
+		"Noclip"
+		{
+			"command"	"noclip"
+		}
+		"Third-person"
+		{
+			"command"	"thirdperson"
+		}
+		"First-person"
+		{
+			"command"	"firstperson"
+		}
+		"Infinite AUX Power"
+		{
+			"togglecvar"	"sv_infinite_aux_power"
+		}
+		"Weapon cubemap"
+		{
+			"command" "impulse 81;wait 100;use weapon_cubemap"
+		}
+		"Build cubemaps"
+		{
+			"command" "host_timescale 0;mat_specular 0;wait;buildcubemaps;host_timescale 1;retry;mat_specular 1;wait 2000;say YOU MAY NEED TO RELOAD THE MAP;"
+		}
+		"Reload all materials"
+		{
+			"command" "mat_reloadallmaterials"
+		}	
+		"Restart all particles"
+		{
+			"command" "ent_fire info_particle_system stop;wait 100;ent_fire info_particle_system start;"
+		}
+		"Restart sound system"
+		{
+			"command" "snd_restart"
+		}
+		"Reload HUD"
+		{
+			"command" "hud_reloadscheme"
+		}
+		"All guns"
+		{
+			"command" "impulse 101"
+		}
+		"sv_hl2mp_item_respawn_time "
+		{
+			"incrementcvar"	"sv_hl2mp_item_respawn_time 0 30 5"
+		}
+		"sv_hl2mp_weapon_respawn_time"
+		{
+			"incrementcvar"	"sv_hl2mp_weapon_respawn_time 0 30 5"
+		}		
+		"phys_timescale small"
+		{
+			"incrementcvar"	"phys_timescale 0 1 0.2"
+		}
+		"phys_timescale large"
+		{
+			"incrementcvar"	"phys_timescale 1 10 3"
+		}
+		"Stop physics"
+		{
+			"command" 	"phys_timescale 0"
+		}
+		"Resume physics"
+		{
+			"command" 	"phys_timescale 1"
+		}
+		"Kill me"
+		{
+			"command" 	"kill"
+		}
+	}
+	"Under crosshair"
+	{
+		"Which material?"
+		{
+			"command" "surfaceprop;say check console!"
+		}
+		"Spawn light"
+		{
+			"command" "create_flashlight"
+		}
+		"Spawn antlion"
+		{
+			"command" "npc_create npc_antlion"
+		}
+		"Spawn Airboat"
+		{
+			"command" "impulse 83"
+		}
+		"------Inputs------"
+		{
+			"command" "playgamesound NPC_Stalker.Hit;say Fire inputs to the entity under the crosshair"
+		}
+		"Remove entity"
+		{
+			"command" "ent_fire !picker kill;"
+		}
+		"Turn entity on"
+		{
+			"command" "ent_fire !picker TurnOn;ent_fire !picker Enable"
+		}
+		"Turn entity off"
+		{
+			"command" "ent_fire !picker TurnOff;ent_fire !picker Disable"
+		}
+		"Break entity"
+		{
+			"command" "ent_fire !picker break"
+		}
+		"Toggle entity"
+		{
+			"command" "ent_fire !picker toggle"
+		}
+		"Open entity"
+		{
+			"command" "ent_fire !picker open"
+		}
+		"Close entity"
+		{
+			"command" "ent_fire !picker close"
+		}
+		"Lock entity"
+		{
+			"command" "ent_fire !picker lock"
+		}
+		"Unlock entity"
+		{
+			"command" "ent_fire !picker unlock"
+		}
+		"Set 100 HP"
+		{
+			"command" "ent_fire !picker sethealth 100"
+		}
+		"Set -1 HP /Suck blood/"
+		{
+			"command" "ent_fire !picker sethealth -1"
+		}
+		"Turn into ragdoll"
+		{
+			"command" "ent_fire !picker BecomeRagdoll"
+		}
+		"-----Need dev 1-----"
+		{
+			"command" "playgamesound NPC_Stalker.Hit;say Set developer to 1 or 2 to use following commands."
+		}
+		"Entity info"
+		{
+			"command" "ent_text"
+		}
+		"Entity absolute box"
+		{
+			"command" "ent_absbox"
+		}
+		"Entity bounding box"
+		{
+			"command" "ent_bbox"
+		}
+		"Entity Pivot"
+		{
+			"command"		"ent_pivot"
+		}
+	}
+	"Show"
+	{
+		"-----Overlay-----"
+		{
+			"command" "playgamesound NPC_Stalker.Hit;say Overlay various info to the screen"
+		}
+		"Picker (ent bounds)"
+		{
+			"command"	"picker"
+		}
+		"cl_showpos"
+		{
+			"command"	"toggle cl_showpos"
+		}
+		"cl_showfps"
+		{
+			"command"	"toggle cl_showfps"
+		}
+		net_graph
+		{
+			"command"	"incrementvar net_graph 0 3 1"
+		}
+		"Texture Budget"
+		{
+			"command"	"toggle showbudget_texture"
+		}
+		"Texture list"
+		{
+			"command"	"+mat_texture_list"
+		}
+		"cl_entityreport"
+		{
+			"command"	"toggle cl_entityreport"
+		}
+		"cl_entityreport +50"
+		{
+			"command"	"incrementvar cl_entityreport 1 2000 50"
+		}
+		"cl_entityreport -50"
+		{
+			"command"	"incrementvar cl_entityreport 1 2000 -50"
+		}
+		"------Render------"
+		{
+			"command" "playgamesound NPC_Stalker.Hit;say Render options for testing maps"
+		}
+		Fullbright
+		{
+			"incrementcvar"	"mat_fullbright 0 2 1"
+		}
+		"Vis-leaves"
+		{
+			"incrementcvar"	"mat_leafvis 0 3 1"
+		}
+		"vcollide_wireframe"
+		{
+			"command"	"toggle vcollide_wireframe"
+		}
+		"Triggers"
+		{
+			"command"	"showtriggers_toggle"
+		}
+		WireFrame
+		{
+			"togglecvar"	"mat_wireframe"
+		}
+		Luxels
+		{
+			"togglecvar"	"mat_luxels"
+		}
+		Normals
+		{
+			"togglecvar"	"mat_normals"
+		}
+		Lights
+		{
+			"togglecvar"	"r_drawlights"
+		}
+		Portals
+		{
+			"togglecvar"	"r_drawportals"
+		}
+		"-------Print-------"
+		{
+			"command" "playgamesound NPC_Stalker.Hit;say Prints various things like used edicts to the console"
+		}
+		"Status > console"
+		{
+			"command"	"status"
+		}
+		"Edicts > console"
+		{
+			"command"	"report_entities"
+		}
+		"Materials > console"
+		{
+			"command"	"mat_showmaterials"
+		}
+		"Textures > console"
+		{
+			"command"	"mat_showtextures"
+		}
+		"-------Entity I/O-------"
+		{
+			"command" "echo;say Overlays entity Inputs and Outputs to the screen for debugging (see console);wait 50;echo I recommend first type because it wont toggle new ents and is cleaner. Second one needs developer on and draws ladders too.;echo;echo Pause command: Toggles pausing of input/output message processing for entities. When turned on processing of all message will stop. Any messages displayed with 'Draw I/O' will stop fading and be displayed indefinitely. To step through the messages one by one use 'Step I/O';playgamesound NPC_Stalker.Hit"
+		}
+		"1. Draw I/O"
+		{
+			"togglecvar"	"ent_messages_draw"
+		}
+		"2. Draw Names + I/O"
+		{
+			"command"	"ent_messages *"
+		}
+		"Pause I/O"
+		{
+			"command"		"ent_pause"
+		}	
+		"Step I/O"
+		{
+			"command"		"ent_step"
+		}
+	}
+	Hide
+	{
+		"Weapon"
+		{
+			"command"	"impulse 200"
+		}
+		HUD
+		{
+			"command"	"toggle cl_drawhud"
+		}
+		"VGUI /everything 2D/"
+		{
+			"togglecvar"	"r_drawvgui"
+		}
+		SkyBox
+		{
+			"togglecvar"	"r_drawskybox"
+		}
+		World
+		{
+			"togglecvar"	"r_drawworld"
+		}
+		Displacements
+		{
+			"togglecvar"	"r_drawdisp"
+		}
+		Entities
+		{
+			"togglecvar"	"r_drawentities"
+		}
+		"Static Props"
+		{
+			"togglecvar"	"r_drawstaticprops"
+		}
+		"Detail Props"
+		{
+			"togglecvar"	"r_drawdetailprops"
+		}
+		Decals
+		{
+			"togglecvar"	"r_drawdecals"
+		}
+		"Brush Models"
+		{
+			"togglecvar"	"r_drawbrushmodels"
+		}
+		Beams
+		{
+			"togglecvar"	"r_drawbeams"
+		}
+		Ropes
+		{
+			"togglecvar"	"r_drawropes"
+		}
+		Sprites
+		{
+			"togglecvar"	"r_drawsprites"
+		}
+		Particles
+		{
+			"togglecvar"	"r_drawparticles"
+		}
+		"Water Surface"
+		{
+			"togglecvar"	"r_drawwatersurface"
+		}
+		"Bump maps"
+		{
+			"togglecvar"	"mat_fastnobump"
+		}
+		"Specular maps"
+		{
+			"togglecvar"	"mat_specular"
+		}
+	}
+	"NPC/AI"
+	{
+		"Kill all alive NPC"
+		{
+			"command"	"ent_fire npc_* sethealth -1"
+		}
+		"No Target"
+		{
+			"command"	"notarget"
+		}
+		Disable
+		{
+			"command"	"ai_disable"
+		}
+		Resume
+		{
+			"command"	"ai_resume"
+		}
+		Step
+		{
+			"command"	"ai_step"
+		}
+		Enemies
+		{
+			"command"		"npc_enemies"
+		}
+		Go
+		{
+			"command"		"npc_go"
+		}
+		"Go Random"
+		{
+			"command"		"npc_go_random"
+		}
+		Route
+		{
+			"command"		"npc_route"
+		}
+		Select
+		{
+			"command"		"npc_select"
+		}
+		Destroy
+		{
+			"command"		"npc_destroy"
+		}
+		ViewCone
+		{
+			"command"		"npc_viewcone"
+		}
+		Tasks
+		{
+			"command"		"npc_tasks"
+		}
+		Combat
+		{
+			"command"		"npc_combat"
+		}
+		Focus
+		{
+			"command"		"npc_focus"
+		}										
+	}
+	"Node Graph"
+	{
+		Nodes
+		{
+			"command"		"ai_nodes"
+		}
+		"Next Hull"
+		{
+			"command"		"ai_next_hull"
+		}
+		"Show Hull"
+		{
+			"command"		"ai_show_hull"
+		}
+		"Show Connect"
+		{
+			"command"		"ai_show_connect"
+		}
+		"Show Visibility"
+		{
+			"command"		"ai_show_visibility"
+		}
+		"Show Graph Connect"
+		{
+			"command"		"ai_show_graph_connect"
+		}
+	}
+	"Sound"
+	{
+		"Restart sound system"
+		{
+			"command" "snd_restart"
+		}
+		"Stop all sounds"
+		{
+			"command" "stopsound"
+		}
+		"Flush soundscape"
+		{
+			"command" "soundscape_flush"
+		}
+		"cl_soundemitter_flush "
+		{
+			"command" "cl_soundemitter_flush"
+		}
+		"Show sounds"
+		{
+			"togglecvar" "snd_show"
+		}
+		"Debug soundscapes"
+		{
+			"togglecvar" "soundscape_debug"
+		}
+	}
+	
+	"Other"
+	{
+		"Demo UI"
+		{
+			"command"	"demoui"
+		}
+		"Demo UI 2"
+		{
+			"command"	"demoui2"
+		}
+		"Fog UI"
+		{
+			"command"	"fogui"
+		}
+		"Color Correction UI"
+		{
+			"command"	"colorcorrectionui"
+		}
+		"Perf UI"
+		{
+			"command"	"perfui"
+		}
+		"----------------"
+		{
+			"command" "playgamesound NPC_Stalker.Hit"
+		}
+		"Hairy balls"
+		{
+			"command" "CreateHairball"
+		}
+		"Restart engine"
+		{
+			"command" "_restart"
+		}
+		"Quit engine"
+		{
+			"command" "quit"
+		}
+		"Go to dm_lockdown"
+		{
+			"command" "changelevel dm_lockdown"
+		}
+		"Teamplay"
+		{
+			"togglecvar" "mp_teamplay"
+		}
+	}
+}
