@@ -83,6 +83,9 @@ BEGIN_SEND_TABLE_NOBASE( CPlayerLocalData, DT_Local )
 	SendPropInt( SENDINFO_STRUCTELEM( m_audio.soundscapeIndex ), 17, 0 ),
 	SendPropInt( SENDINFO_STRUCTELEM( m_audio.localBits ), NUM_AUDIO_LOCAL_SOUNDS, SPROP_UNSIGNED ),
 	SendPropEHandle( SENDINFO_STRUCTELEM( m_audio.ent ) ),
+
+	// NEW: Quick jump
+	SendPropBool	(SENDINFO(m_bQuickJumpEnabled)),
 END_SEND_TABLE()
 
 BEGIN_SIMPLE_DATADESC( fogplayerparams_t )
@@ -159,6 +162,9 @@ BEGIN_SIMPLE_DATADESC( CPlayerLocalData )
 	DEFINE_EMBEDDED( m_PlayerFog ),
 	DEFINE_EMBEDDED( m_fog ),
 	DEFINE_EMBEDDED( m_audio ),
+
+	// NEW: Quick jump
+	DEFINE_FIELD( m_bQuickJumpEnabled, FIELD_BOOLEAN ),
 	
 	// "Why don't we save this field, grandpa?"
 	//
@@ -185,6 +191,7 @@ CPlayerLocalData::CPlayerLocalData()
 	m_audio.ent.Set( NULL );
 	m_pOldSkyCamera = NULL;
 	m_bDrawViewmodel = true;
+	m_bQuickJumpEnabled = false;
 }
 
 

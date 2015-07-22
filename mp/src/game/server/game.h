@@ -35,8 +35,6 @@ extern ConVar	teamoverride;
 extern ConVar	defaultteam;
 extern ConVar	allowNPCs;
 
-extern ConVar mp_allow_quick_jump;
-
 extern ConVar	suitvolume;
 
 // Engine Cvars

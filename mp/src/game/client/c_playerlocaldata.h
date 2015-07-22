@@ -75,6 +75,9 @@ public:
 
 	bool					m_bSlowMovement;
 
+	// NEW: Client switch for quick jump.
+	bool	m_bQuickJumpEnabled;
+
 };
 
 #endif // C_PLAYERLOCALDATA_H

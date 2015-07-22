@@ -296,6 +296,13 @@ void CTeamplayRules::ClientSettingsChanged( CBasePlayer *pPlayer )
 		int iHH = atoi(pszHH);
 		pPlayer->SetHaptics(iHH!=0);
 	}
+
+	// New: Handling quick jump.
+	const char* qj = engine->GetClientConVarValue( pPlayer->entindex(), "cl_allow_quick_jump" );
+	if ( qj )
+	{
+		pPlayer->SetQuickJumpEnabled(atoi(qj) != 0);
+	}
 }
 
 //=========================================================

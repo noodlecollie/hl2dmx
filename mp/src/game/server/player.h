@@ -1219,6 +1219,10 @@ private:
 public:
 	virtual unsigned int PlayerSolidMask( bool brushOnly = false ) const;	// returns the solid mask for the given player, so bots can have a more-restrictive set
 
+	// New: Quick jump
+public:
+	bool IsQuickJumpEnabled() const { return m_Local.m_bQuickJumpEnabled; }
+	void SetQuickJumpEnabled(bool enabled) { m_Local.m_bQuickJumpEnabled = enabled; }
 };
 
 typedef CHandle<CBasePlayer> CBasePlayerHandle;

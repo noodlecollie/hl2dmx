@@ -203,6 +203,10 @@ BEGIN_RECV_TABLE_NOBASE( CPlayerLocalData, DT_Local )
 	RecvPropInt( RECVINFO( m_audio.soundscapeIndex ) ),
 	RecvPropInt( RECVINFO( m_audio.localBits ) ),
 	RecvPropEHandle( RECVINFO( m_audio.ent ) ),
+
+	// NEW: Quick jump data
+	RecvPropBool	(RECVINFO(m_bQuickJumpEnabled)),
+
 END_RECV_TABLE()
 
 // -------------------------------------------------------------------------------- //
@@ -340,6 +344,9 @@ BEGIN_PREDICTION_DATA_NO_BASE( CPlayerLocalData )
 	DEFINE_FIELD( m_nOldButtons, FIELD_INTEGER ),
 	DEFINE_PRED_FIELD( m_flStepSize, FIELD_FLOAT, FTYPEDESC_INSENDTABLE ),
 	DEFINE_FIELD( m_flFOVRate, FIELD_FLOAT ),
+
+	// NEW: Quick jump
+	DEFINE_PRED_FIELD( m_bQuickJumpEnabled, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE ),
 
 END_PREDICTION_DATA()	
 

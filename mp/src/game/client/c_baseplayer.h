@@ -636,6 +636,11 @@ public:
 	bool  ShouldGoSouth( Vector vNPCForward, Vector vNPCRight ); //Such a bad name.
 
 	void SetOldPlayerZ( float flOld ) { m_flOldPlayerZ = flOld;	}
+
+	// New: Quick jump
+public:
+	bool IsQuickJumpEnabled() const { return m_Local.m_bQuickJumpEnabled; }
+	void SetQuickJumpEnabled(bool enabled) { m_Local.m_bQuickJumpEnabled = enabled; }
 };
 
 EXTERN_RECV_TABLE(DT_BasePlayer);
