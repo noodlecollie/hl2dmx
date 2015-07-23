@@ -32,7 +32,7 @@
 
 
 // Half-Life User Info Configuration Layout Script (stores last settings chosen, too)
-// File generated:  Wed Jul 22 22:38:12 AM
+// File generated:  Thu Jul 23 16:32:20 AM
 //
 //
 // Cvar	-	Setting
@@ -43,21 +43,28 @@ DESCRIPTION INFO_OPTIONS
 {
 	"r_drawviewmodel"
 	{
-		"Draw the viewmodel"
+		"Draw viewmodel"
 		{ BOOL }
 		{ "1" }
 	}
 
 	"viewmodel_fov"
 	{
-		"Adjust the field of view"
+		"Viewmodel ield of view"
 		{ SLIDER 54 70 }
 		{ "54" }
 	}
 
 	"cl_allow_quick_jump"
 	{
-		"Holding down +jump allows continual jumping."
+		"Quick jump: holding down +jump allows continual jumping"
+		{ BOOL }
+		{ "1" }
+	}
+
+	"cl_weapon_glow"
+	{
+		"Nearby weapon pickups glow"
 		{ BOOL }
 		{ "1" }
 	}

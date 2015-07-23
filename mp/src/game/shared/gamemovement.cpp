@@ -83,7 +83,7 @@ bool g_bMovementOptimizations = true;
 extern IGameMovement *g_pGameMovement;
 
 // NEW: Allow holding down space to let the player jump as soon as they hit the ground.
-ConVar mp_allow_quick_jump( "mp_allow_quick_jump", "0", FCVAR_NOTIFY, "If set, lets players hold down +jump to jump continuously." );
+ConVar mp_allow_quick_jump( "mp_allow_quick_jump", "0", FCVAR_NOTIFY | FCVAR_REPLICATED, "If set, lets players hold down +jump to jump continuously." );
 
 #if defined( PLAYER_GETTING_STUCK_TESTING )
 

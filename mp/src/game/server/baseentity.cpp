@@ -306,6 +306,11 @@ IMPLEMENT_SERVERCLASS_ST_NOBASE( CBaseEntity, DT_BaseEntity )
 	SendPropArray3( SENDINFO_ARRAY3(m_nModelIndexOverrides), SendPropInt( SENDINFO_ARRAY(m_nModelIndexOverrides), SP_MODEL_INDEX_BITS, 0 ) ),
 #endif
 
+	// NEW
+#ifdef GLOWS_ENABLE
+	SendPropBool( SENDINFO( m_bGlowEnabled ) ),
+#endif // GLOWS_ENABLE
+
 END_SEND_TABLE()
 
 
@@ -414,6 +419,11 @@ CBaseEntity::CBaseEntity( bool bServerOnly )
 #ifndef _XBOX
 	AddEFlags( EFL_USE_PARTITION_WHEN_NOT_SOLID );
 #endif
+
+	// NEW
+#ifdef GLOWS_ENABLE
+	m_bGlowEnabled.Set( false );
+#endif // GLOWS_ENABLE
 }
 
 //-----------------------------------------------------------------------------
@@ -1616,6 +1626,12 @@ void CBaseEntity::Event_Killed( const CTakeDamageInfo &info )
 
 	m_takedamage = DAMAGE_NO;
 	m_lifeState = LIFE_DEAD;
+
+	// NEW
+#ifdef GLOWS_ENABLE
+	RemoveGlowEffect();
+#endif // GLOWS_ENABLE
+
 	UTIL_Remove( this );
 }
 
@@ -1936,6 +1952,11 @@ BEGIN_DATADESC_NO_BASE( CBaseEntity )
 	DEFINE_OUTPUT( m_OnUser3, "OnUser3" ),
 	DEFINE_OUTPUT( m_OnUser4, "OnUser4" ),
 
+#ifdef GLOWS_ENABLE
+	DEFINE_INPUTFUNC( FIELD_STRING, "EnableGlow", InputEnableGlow ),
+	DEFINE_INPUTFUNC( FIELD_VOID, "DisableGlow", InputDisableGlow ),
+#endif
+
 	// Function Pointers
 	DEFINE_FUNCTION( SUB_Remove ),
 	DEFINE_FUNCTION( SUB_DoNothing ),
@@ -2056,6 +2077,11 @@ void CBaseEntity::UpdateOnRemove( void )
 		modelinfo->ReleaseDynamicModel( m_nModelIndex ); // no-op if not dynamic
 		m_nModelIndex = -1;
 	}
+
+	// NEW
+#ifdef GLOWS_ENABLE
+	RemoveGlowEffect();
+#endif // GLOWS_ENABLE
 }
 
 //-----------------------------------------------------------------------------
@@ -4142,6 +4168,25 @@ void CBaseEntity::InputKillHierarchy( inputdata_t &inputdata )
 	UTIL_Remove( this );
 }
 
+#ifdef GLOWS_ENABLE
+void CBaseEntity::InputEnableGlow( inputdata_t &inputdata )
+{
+	if ( inputdata.value.String() && V_strlen(inputdata.value.String()) > 0 )
+	{
+		Vector col;
+		inputdata.value.Vector3D(col);
+		// TODO: Set colour
+	}
+
+	AddGlowEffect();
+}
+
+void CBaseEntity::InputDisableGlow( inputdata_t &inputdata )
+{
+	RemoveGlowEffect();
+}
+#endif
+
 //------------------------------------------------------------------------------
 // Purpose: Input handler for changing this entity's movement parent.
 //------------------------------------------------------------------------------
@@ -4322,6 +4367,11 @@ void CBaseEntity::InputSetTeam( inputdata_t &inputdata )
 void CBaseEntity::ChangeTeam( int iTeamNum )
 {
 	m_iTeamNum = iTeamNum;
+
+	// NEW
+#ifdef GLOWS_ENABLE
+	RemoveGlowEffect();
+#endif // GLOWS_ENABLE
 }
 
 //-----------------------------------------------------------------------------
@@ -7474,3 +7524,30 @@ void CC_Ent_Orient( const CCommand& args )
 }
 
 static ConCommand ent_orient("ent_orient", CC_Ent_Orient, "Orient the specified entity to match the player's angles. By default, only orients target entity's YAW. Use the 'allangles' option to orient on all axis.\n\tFormat: ent_orient <entity name> <optional: allangles>", FCVAR_CHEAT);
+
+#ifdef GLOWS_ENABLE
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void CBaseEntity::AddGlowEffect( void )
+{
+	SetTransmitState( FL_EDICT_ALWAYS );
+	m_bGlowEnabled.Set( true );
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void CBaseEntity::RemoveGlowEffect( void )
+{
+	m_bGlowEnabled.Set( false );
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+bool CBaseEntity::IsGlowEffectActive( void )
+{
+	return m_bGlowEnabled;
+}
+#endif // GLOWS_ENABLE

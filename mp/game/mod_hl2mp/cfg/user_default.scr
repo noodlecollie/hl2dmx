@@ -43,22 +43,29 @@ DESCRIPTION INFO_OPTIONS
 {
 	"r_drawviewmodel" //the convar
 	{
-		"Draw the viewmodel"  //the description
+		"Draw viewmodel"  //the description
 		{ BOOL }  //the type of convar
 		{ "1" }  //the boolean value
 	}	
 	
 	"viewmodel_fov"  //the convar
 	{
-		"Adjust the field of view"  //the description
+		"Viewmodel ield of view"  //the description
 		{ SLIDER 54 70 }  //the type of convar
 		{ "1" }  //the boolean value
 	}
     
     "cl_allow_quick_jump"
     {
-        "Holding down +jump allows continual jumping."
+        "Quick jump: holding down +jump allows continual jumping"
         { BOOL }
         { "0" }
+    }
+    
+    "cl_weapon_glow"
+    {
+        "Nearby weapon pickups glow"
+        { BOOL }
+        { 1 }
     }
 }

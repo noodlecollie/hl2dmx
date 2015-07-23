@@ -86,7 +86,15 @@ void C_TeamTrainWatcher::UpdateGlowEffect( void )
 	if ( m_hGlowEnt )
 	{
 		float r, g, b;
+
+		// Fix - this only works in TF2, it seems.
+#ifdef TF_CLIENT_DLL
 		TeamplayRoundBasedRules()->GetTeamGlowColor( GetTeamNumber(), r, g, b );
+#else
+		r = 1.0f;
+		g = 1.0f;
+		b = 1.0f;
+#endif
 		m_pGlowEffect = new CGlowObject( m_hGlowEnt, Vector( r, g, b ), 1.0, true );
 	}
 }

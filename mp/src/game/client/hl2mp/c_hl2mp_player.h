@@ -14,6 +14,8 @@ class C_HL2MP_Player;
 #include "hl2mp_player_shared.h"
 #include "beamdraw.h"
 
+#define MAX_GLOW_WEAPONS 16
+
 //=============================================================================
 // >> HL2MP_Player
 //=============================================================================
@@ -127,6 +129,14 @@ private:
 	CNetworkVar( HL2MPPlayerState, m_iPlayerState );	
 
 	bool m_fIsWalking;
+
+	// Forget mucking about with hash tables
+	EHANDLE m_GlowWeapons[MAX_GLOW_WEAPONS];
+	int m_iGlowWeaponCount;
+	bool HandleWeaponGlow(const EHANDLE &e);
+	bool IsCachedGlowWeapon(const EHANDLE &e) const;
+	void PruneGlowWeapons();
+	void RemoveGlowWeapon(int i);
 };
 
 inline C_HL2MP_Player *ToHL2MPPlayer( CBaseEntity *pEntity )

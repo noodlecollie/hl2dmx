@@ -36,6 +36,11 @@
 #include "toolframework/itoolentity.h"
 #include "tier0/threadtools.h"
 
+// NEW: Moving glow enable to C_BaseEntity.
+#ifdef GLOWS_ENABLE
+#include "glow_outline_effect.h"
+#endif // GLOWS_ENABLE
+
 class C_Team;
 class IPhysicsObject;
 class IClientVehicle;
@@ -1701,6 +1706,25 @@ protected:
 	RenderMode_t m_PreviousRenderMode;
 	color32 m_PreviousRenderColor;
 #endif
+
+	// NEW
+#ifdef GLOWS_ENABLE
+public:
+	CGlowObject			*GetGlowObject( void ){ return m_pGlowEffect; }
+	virtual void		GetGlowEffectColor( float *r, float *g, float *b );
+	bool				IsClientsideGlowEnabled() const;
+	void				SetClientsideGlowEnabled(bool enabled);
+
+protected:
+	virtual void		UpdateGlowEffect( void );
+	virtual void		DestroyGlowEffect( void );
+
+private:
+	bool				m_bGlowEnabled;
+	bool				m_bOldGlowEnabled;
+	bool				m_bClientsideGlowEnabled;
+	CGlowObject			*m_pGlowEffect;
+#endif // GLOWS_ENABLE
 };
 
 EXTERN_RECV_TABLE(DT_BaseEntity);

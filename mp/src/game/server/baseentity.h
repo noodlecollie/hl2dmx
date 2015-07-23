@@ -668,6 +668,12 @@ public:
 	void InputFireUser3( inputdata_t &inputdata );
 	void InputFireUser4( inputdata_t &inputdata );
 
+	// NEW
+#ifdef GLOWS_ENABLE
+	void InputEnableGlow( inputdata_t &inputdata );
+	void InputDisableGlow( inputdata_t &inputdata );
+#endif
+
 	// Returns the origin at which to play an inputted dispatcheffect 
 	virtual void GetInputDispatchEffectPosition( const char *sInputString, Vector &pOrigin, QAngle &pAngles );
 
@@ -1799,6 +1805,28 @@ public:
 	{
 		return s_bAbsQueriesValid;
 	}
+
+public:
+	// NEW
+#ifdef GLOWS_ENABLE
+	// Glows
+	void				AddGlowEffect( void );
+	void				RemoveGlowEffect( void );
+	bool				IsGlowEffectActive( void );
+#endif // GLOWS_ENABLE
+
+protected:
+	// NEW
+#ifdef GLOWS_ENABLE
+	CNetworkVar( bool, m_bGlowEnabled );
+#endif // GLOWS_ENABLE
+
+private:
+	// NEW
+#ifdef GLOWS_ENABLE
+	void				UpdateGlowEffect( void );
+	void				DestroyGlowEffect( void );
+#endif
 };
 
 // Send tables exposed in this module.

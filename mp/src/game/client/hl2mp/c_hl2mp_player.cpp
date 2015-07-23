@@ -14,6 +14,7 @@
 #include "iviewrender_beams.h"			// flashlight beam
 #include "r_efx.h"
 #include "dlight.h"
+#include "../c_basecombatweapon.h"
 
 // Don't alias here
 #if defined( CHL2MP_Player )
@@ -39,9 +40,11 @@ END_PREDICTION_DATA()
 #define	HL2_WALK_SPEED 150
 #define	HL2_NORM_SPEED 190
 #define	HL2_SPRINT_SPEED 320
+#define NEARBY_WEAPON_GLOW_RADIUS 120
 
 static ConVar cl_playermodel( "cl_playermodel", "none", FCVAR_USERINFO | FCVAR_ARCHIVE | FCVAR_SERVER_CAN_EXECUTE, "Default Player Model");
 static ConVar cl_defaultweapon( "cl_defaultweapon", "weapon_physcannon", FCVAR_USERINFO | FCVAR_ARCHIVE, "Default Spawn Weapon");
+static ConVar cl_weapon_glow( "cl_weapon_glow", "1", FCVAR_ARCHIVE | FCVAR_CLIENTDLL, "Whether nearby weapon pickups should have an outline glow.");
 
 void SpawnBlood (Vector vecSpot, const Vector &vecDir, int bloodColor, float flDamage);
 
@@ -261,6 +264,103 @@ void C_HL2MP_Player::ClientThink( void )
 	}
 
 	UpdateIDTarget();
+
+	// NEW: Highlight pickup-able weapons.
+	// We find nearby weapons here and add them to the list if they are valid.
+	// We then iterate over the list to set or unset the glow.
+	// This isn't the neatest way of doing this, but using CUtlHash was proving difficult.
+	C_BaseEntity* ents[256];
+	Vector org = GetLocalOrigin();
+	int entCount = UTIL_EntitiesInSphere(ents, 256, org, NEARBY_WEAPON_GLOW_RADIUS, 0);
+
+	// Find new weapons if we have space for them.
+	bool glowCvar = cl_weapon_glow.GetBool();
+	if ( m_iGlowWeaponCount < MAX_GLOW_WEAPONS && glowCvar )
+	{
+		for ( int i = 0; i < entCount; i++ )
+		{
+			C_BaseCombatWeapon* w = dynamic_cast<C_BaseCombatWeapon*>(ents[i]);
+			if ( !w || dynamic_cast<C_HL2MP_Player*>(w->GetOwnerEntity()) ) continue;
+
+			EHANDLE e(w);
+			if ( !IsCachedGlowWeapon(e) && m_iGlowWeaponCount < MAX_GLOW_WEAPONS )
+			{
+				m_GlowWeapons[m_iGlowWeaponCount] = e;
+				m_iGlowWeaponCount++;
+			}
+		}
+	}
+
+	// Iterate over the list and set the glow states.
+	// To remove a cached weapon, the EHANDLE is terminated.
+	// The next pass prunes the list.
+	bool removed = false;
+	for ( int i = 0; i < m_iGlowWeaponCount; i++ )
+	{
+		EHANDLE e = m_GlowWeapons[i];
+		if ( !e.Get() )
+		{
+			e.Term();
+			removed = true;
+			continue;
+		}
+
+		bool shouldGlow = HandleWeaponGlow(e) && glowCvar;
+		e.Get()->SetClientsideGlowEnabled(shouldGlow);
+		if ( !shouldGlow )
+		{
+			e.Term();
+			removed = true;
+		}
+	}
+
+	// Prune the list.
+	PruneGlowWeapons();
+}
+
+bool C_HL2MP_Player::HandleWeaponGlow(const EHANDLE &e)
+{
+	C_BaseCombatWeapon* w = dynamic_cast<C_BaseCombatWeapon*>(e.Get());
+
+	if ( !w || dynamic_cast<C_HL2MP_Player*>(w->GetOwnerEntity()) ) return false;
+
+	// Check distance
+	Vector org = GetLocalOrigin();
+	Vector worg = w->GetLocalOrigin();
+	if ( (worg - org).LengthSqr() > NEARBY_WEAPON_GLOW_RADIUS * NEARBY_WEAPON_GLOW_RADIUS ) return false;
+
+	return true;
+}
+
+void C_HL2MP_Player::PruneGlowWeapons()
+{
+	// Iterate down for speed.
+	for ( int i = m_iGlowWeaponCount - 1; i >= 0; i-- )	// Iteration handled manually
+	{
+		if ( !m_GlowWeapons[i].IsValid() ) RemoveGlowWeapon(i);
+	}
+}
+
+void C_HL2MP_Player::RemoveGlowWeapon(int i)
+{
+	for ( int j = i+1; j < m_iGlowWeaponCount; j++ )
+	{
+		m_GlowWeapons[j-1] = m_GlowWeapons[j];
+	}
+
+	// Just in case
+	m_GlowWeapons[m_iGlowWeaponCount-1].Term();
+	m_iGlowWeaponCount--;
+}
+
+bool C_HL2MP_Player::IsCachedGlowWeapon(const EHANDLE &e) const
+{
+	for ( int i = 0; i < m_iGlowWeaponCount; i++ )
+	{
+		if ( m_GlowWeapons[i] == e ) return true;
+	}
+
+	return false;
 }
 
 //-----------------------------------------------------------------------------

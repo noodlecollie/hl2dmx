@@ -41,6 +41,10 @@
 #include "xbox/xbox_console.h"
 #endif
 
+#if defined(GLOWS_ENABLE)
+#include "clienteffectprecachesystem.h"
+#endif
+
 #if defined( REPLAY_ENABLED )
 #include "replay/replaycamera.h"
 #include "replay/ireplaysystem.h"
@@ -85,6 +89,13 @@ extern ConVar v_viewmodel_fov;
 extern ConVar voice_modenable;
 
 extern bool IsInCommentaryMode( void );
+
+#if defined(GLOWS_ENABLE)
+CLIENTEFFECT_REGISTER_BEGIN( PrecachePostProcessingEffectsGlow )
+CLIENTEFFECT_MATERIAL( "dev/glow_color" )
+CLIENTEFFECT_MATERIAL( "dev/halo_add_to_screen" )
+CLIENTEFFECT_REGISTER_END_CONDITIONAL( engine->GetDXSupportLevel() >= 90 )
+#endif
 
 #ifdef VOICE_VOX_ENABLE
 void VoxCallback( IConVar *var, const char *oldString, float oldFloat )
@@ -776,7 +787,12 @@ bool ClientModeShared::DoPostScreenSpaceEffects( const CViewSetup *pSetup )
 		if ( !replay_rendersetting_renderglow.GetBool() )
 			return false;
 	}
-#endif 
+#endif
+
+#if defined(GLOWS_ENABLE)
+	g_GlowObjectManager.RenderGlowEffects( pSetup, 0 );
+#endif
+
 	return true;
 }
 

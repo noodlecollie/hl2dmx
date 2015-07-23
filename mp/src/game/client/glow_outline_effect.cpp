@@ -328,4 +328,13 @@ void CGlowObjectManager::GlowObjectDefinition_t::DrawModel()
 	}
 }
 
+bool ShouldDrawHack(C_BaseEntity* ent, int splitScreenSlot, int curSlot, bool renderWhenOccluded, bool renderWhenUnoccluded)
+{
+	return ent && 
+			( splitScreenSlot == GLOW_FOR_ALL_SPLIT_SCREEN_SLOTS || splitScreenSlot == curSlot ) && 
+			( renderWhenOccluded || renderWhenUnoccluded ) && 
+			ent->ShouldDraw() && 
+			!ent->IsDormant();
+}
+
 #endif // GLOWS_ENABLE

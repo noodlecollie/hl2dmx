@@ -22,6 +22,11 @@ class CMatRenderContextPtr;
 
 static const int GLOW_FOR_ALL_SPLIT_SCREEN_SLOTS = -1;
 
+// HACK
+// For some reason GlowObjectDefinition_t's ShouldDraw() function says C_BaseEntity is undefined,
+// even if you include the header. Moving the check to the .cpp file instead.
+bool ShouldDrawHack(C_BaseEntity* ent, int splitScreenSlot, int curSlot, bool renderWhenOccluded, bool renderWhenUnoccluded);
+
 class CGlowObjectManager
 {
 public:
@@ -124,11 +129,12 @@ private:
 	{
 		bool ShouldDraw( int nSlot ) const
 		{
-			return m_hEntity.Get() && 
+			/*return m_hEntity.Get() && 
 				   ( m_nSplitScreenSlot == GLOW_FOR_ALL_SPLIT_SCREEN_SLOTS || m_nSplitScreenSlot == nSlot ) && 
 				   ( m_bRenderWhenOccluded || m_bRenderWhenUnoccluded ) && 
 				   m_hEntity->ShouldDraw() && 
-				   !m_hEntity->IsDormant();
+				   !m_hEntity->IsDormant();*/
+			return ShouldDrawHack(m_hEntity.Get(), m_nSplitScreenSlot, nSlot, m_bRenderWhenOccluded, m_bRenderWhenUnoccluded);
 		}
 
 		bool IsUnused() const { return m_nNextFreeSlot != GlowObjectDefinition_t::ENTRY_IN_USE; }
