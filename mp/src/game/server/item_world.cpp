@@ -545,3 +545,6 @@ void CItem::OnPhysGunDrop( CBasePlayer *pPhysGunUser, PhysGunDrop_t reason )
 	// Restore the pickup box to the original
 	CollisionProp()->UseTriggerBounds( true, ITEM_PICKUP_BOX_BLOAT );
 }
+
+IMPLEMENT_SERVERCLASS_ST( CItem, DT_Item )
+END_SEND_TABLE()

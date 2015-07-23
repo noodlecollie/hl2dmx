@@ -42,6 +42,7 @@ class CItem : public CBaseAnimating, public CDefaultPlayerPickupVPhysics
 {
 public:
 	DECLARE_CLASS( CItem, CBaseAnimating );
+	DECLARE_SERVERCLASS();	// NEW: Making us networkable for glow highlighting purposes.
 
 	CItem();
 

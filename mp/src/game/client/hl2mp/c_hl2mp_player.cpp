@@ -15,6 +15,7 @@
 #include "r_efx.h"
 #include "dlight.h"
 #include "../c_basecombatweapon.h"
+#include "../c_item.h"
 
 // Don't alias here
 #if defined( CHL2MP_Player )
@@ -40,7 +41,7 @@ END_PREDICTION_DATA()
 #define	HL2_WALK_SPEED 150
 #define	HL2_NORM_SPEED 190
 #define	HL2_SPRINT_SPEED 320
-#define NEARBY_WEAPON_GLOW_RADIUS 120
+#define NEARBY_WEAPON_GLOW_RADIUS 180
 
 static ConVar cl_playermodel( "cl_playermodel", "none", FCVAR_USERINFO | FCVAR_ARCHIVE | FCVAR_SERVER_CAN_EXECUTE, "Default Player Model");
 static ConVar cl_defaultweapon( "cl_defaultweapon", "weapon_physcannon", FCVAR_USERINFO | FCVAR_ARCHIVE, "Default Spawn Weapon");
@@ -280,13 +281,30 @@ void C_HL2MP_Player::ClientThink( void )
 		for ( int i = 0; i < entCount; i++ )
 		{
 			C_BaseCombatWeapon* w = dynamic_cast<C_BaseCombatWeapon*>(ents[i]);
-			if ( !w || dynamic_cast<C_HL2MP_Player*>(w->GetOwnerEntity()) ) continue;
-
-			EHANDLE e(w);
-			if ( !IsCachedGlowWeapon(e) && m_iGlowWeaponCount < MAX_GLOW_WEAPONS )
+			if ( w && !dynamic_cast<C_HL2MP_Player*>(w->GetOwnerEntity()) )
 			{
-				m_GlowWeapons[m_iGlowWeaponCount] = e;
-				m_iGlowWeaponCount++;
+				EHANDLE e(w);
+				if ( !IsCachedGlowWeapon(e) && m_iGlowWeaponCount < MAX_GLOW_WEAPONS )
+				{
+					m_GlowWeapons[m_iGlowWeaponCount] = e;
+					m_iGlowWeaponCount++;
+				}
+
+				continue;
+			}
+
+			// CItem's been networked specifically for this purpose.
+			C_Item* item = dynamic_cast<C_Item*>(ents[i]);
+			if ( item && !dynamic_cast<C_HL2MP_Player*>(item->GetOwnerEntity()) )
+			{
+				EHANDLE e(item);
+				if ( !IsCachedGlowWeapon(e) && m_iGlowWeaponCount < MAX_GLOW_WEAPONS )
+				{
+					m_GlowWeapons[m_iGlowWeaponCount] = e;
+					m_iGlowWeaponCount++;
+				}
+
+				continue;
 			}
 		}
 	}
@@ -318,18 +336,24 @@ void C_HL2MP_Player::ClientThink( void )
 	PruneGlowWeapons();
 }
 
+bool C_HL2MP_Player::EntityWithinGlowRange(C_BaseEntity* e) const
+{
+	Vector org = GetLocalOrigin();
+	Vector worg = e->GetLocalOrigin();
+	return (worg - org).LengthSqr() <= NEARBY_WEAPON_GLOW_RADIUS * NEARBY_WEAPON_GLOW_RADIUS;
+}
+
 bool C_HL2MP_Player::HandleWeaponGlow(const EHANDLE &e)
 {
-	C_BaseCombatWeapon* w = dynamic_cast<C_BaseCombatWeapon*>(e.Get());
+	C_BaseEntity* ent = e.Get();
 
-	if ( !w || dynamic_cast<C_HL2MP_Player*>(w->GetOwnerEntity()) ) return false;
+	C_BaseCombatWeapon* w = dynamic_cast<C_BaseCombatWeapon*>(ent);
+	if ( w && !dynamic_cast<C_HL2MP_Player*>(w->GetOwnerEntity()) ) return EntityWithinGlowRange(ent);
 
-	// Check distance
-	Vector org = GetLocalOrigin();
-	Vector worg = w->GetLocalOrigin();
-	if ( (worg - org).LengthSqr() > NEARBY_WEAPON_GLOW_RADIUS * NEARBY_WEAPON_GLOW_RADIUS ) return false;
+	C_Item* item = dynamic_cast<C_Item*>(ent);
+	if ( item && !dynamic_cast<C_HL2MP_Player*>(item->GetOwnerEntity()) ) return EntityWithinGlowRange(ent);
 
-	return true;
+	return false;
 }
 
 void C_HL2MP_Player::PruneGlowWeapons()
