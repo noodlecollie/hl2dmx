@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "6535"
-	"mapversion" "31"
+	"mapversion" "33"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -20,7 +20,7 @@ viewsettings
 world
 {
 	"id" "1"
-	"mapversion" "31"
+	"mapversion" "33"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -5903,17 +5903,37 @@ entity
 entity
 {
 	"id" "1213"
-	"classname" "prop_static"
+	"classname" "prop_physics_multiplayer"
 	"angles" "0 90 0"
+	"damagetoenablemotion" "0"
+	"Damagetype" "0"
+	"disablereceiveshadows" "0"
+	"ExplodeDamage" "0"
+	"ExplodeRadius" "0"
 	"fademindist" "-1"
 	"fadescale" "1"
+	"forcetoenablemotion" "0"
+	"inertiaScale" "1.0"
+	"massScale" "0"
+	"minhealthdmg" "0"
 	"model" "models/props_c17/furnituretable002a.mdl"
+	"modelscale" "1.0"
+	"nodamageforces" "0"
+	"PerformanceMode" "0"
+	"physdamagescale" "0.1"
+	"physicsmode" "0"
+	"pressuredelay" "0"
+	"renderamt" "255"
+	"rendercolor" "255 255 255"
+	"renderfx" "0"
+	"rendermode" "0"
+	"shadowcastdist" "0"
 	"skin" "0"
-	"solid" "6"
-	"origin" "480.216 -22.1307 18.1635"
+	"spawnflags" "1802"
+	"origin" "480.182 -22.1307 18.2646"
 	editor
 	{
-		"color" "255 255 0"
+		"color" "220 30 220"
 		"visgroupshown" "1"
 		"visgroupautoshown" "1"
 		"logicalpos" "[0 0]"
@@ -5926,7 +5946,7 @@ entity
 	"angles" "0 0 -90"
 	"fademindist" "-1"
 	"fadescale" "1"
-	"origin" "464 -24.3747 37.8703"
+	"origin" "464.126 -24.3747 38.625"
 	editor
 	{
 		"color" "0 0 200"
@@ -6003,8 +6023,8 @@ cameras
 	"activecamera" "0"
 	camera
 	{
-		"position" "[432.899 -104.004 197.059]"
-		"look" "[453.013 128.034 145.508]"
+		"position" "[478.065 -73.1387 64.4225]"
+		"look" "[495.135 141.165 -38.951]"
 	}
 }
 cordon

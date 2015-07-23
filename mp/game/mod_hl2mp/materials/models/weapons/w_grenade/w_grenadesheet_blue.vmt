@@ -1,0 +1,7 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "models/weapons/w_grenade/w_grenadesheet_blue"
+	"$envmap" "env_cubemap"	
+	"$basealphaenvmapmask" 1	
+	"$model" 1
+}

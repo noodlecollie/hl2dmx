@@ -69,4 +69,10 @@ DESCRIPTION INFO_OPTIONS
 		{ "1" }
 	}
 
+    "glow_blur_enabled"
+    {
+        "Glow outline effect is blurred"
+        { BOOL }
+        { 1 }
+    }
 }

@@ -32,7 +32,7 @@
 
 
 // Half-Life User Info Configuration Layout Script (stores last settings chosen, too)
-// File generated:  Thu Jul 23 19:45:30 AM
+// File generated:  Thu Jul 23 19:58:38 AM
 //
 //
 // Cvar	-	Setting
@@ -65,6 +65,13 @@ DESCRIPTION INFO_OPTIONS
 	"cl_weapon_glow"
 	{
 		"Nearby weapon pickups glow"
+		{ BOOL }
+		{ "1" }
+	}
+
+	"glow_blur_enabled"
+	{
+		"Glow outline effect is blurred"
 		{ BOOL }
 		{ "1" }
 	}
