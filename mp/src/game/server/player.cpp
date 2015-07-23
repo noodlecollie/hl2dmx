@@ -117,7 +117,7 @@ ConVar cl_backspeed( "cl_backspeed", "450", FCVAR_REPLICATED | FCVAR_CHEAT );
 ConVar	sv_noclipduringpause( "sv_noclipduringpause", "0", FCVAR_REPLICATED | FCVAR_CHEAT, "If cheats are enabled, then you can noclip with the game paused (for doing screenshots, etc.)." );
 
 // NEW: Quick jump
-ConVar	cl_allow_quick_jump( "cl_allow_quick_jump", "0", FCVAR_USERINFO | FCVAR_ARCHIVE, "If set, holding +jump allows continual jumping." );
+ConVar	cl_allow_quick_jump( "cl_allow_quick_jump", "0", FCVAR_USERINFO | FCVAR_ARCHIVE | FCVAR_CLIENTDLL, "If set, holding +jump allows continual jumping." );
 
 extern ConVar sv_maxunlag;
 extern ConVar sv_turbophysics;

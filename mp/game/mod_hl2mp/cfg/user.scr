@@ -32,7 +32,7 @@
 
 
 // Half-Life User Info Configuration Layout Script (stores last settings chosen, too)
-// File generated:  Thu Jul 23 16:32:20 AM
+// File generated:  Thu Jul 23 19:45:30 AM
 //
 //
 // Cvar	-	Setting
@@ -50,7 +50,7 @@ DESCRIPTION INFO_OPTIONS
 
 	"viewmodel_fov"
 	{
-		"Viewmodel ield of view"
+		"Viewmodel field of view"
 		{ SLIDER 54 70 }
 		{ "54" }
 	}

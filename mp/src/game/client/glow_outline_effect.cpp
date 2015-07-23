@@ -19,6 +19,7 @@
 
 ConVar glow_outline_effect_enable( "glow_outline_effect_enable", "1", FCVAR_ARCHIVE, "Enable entity outline glow effects." );
 ConVar glow_outline_effect_width( "glow_outline_width", "10.0f", FCVAR_CHEAT, "Width of glow outline effect in screen space." );
+ConVar glow_blur_enabled( "glow_blur_enabled", "1", FCVAR_ARCHIVE | FCVAR_CLIENTDLL, "Whether the glow outline is blurred (like L4D) or aliased (like TF2).");
 
 extern bool g_bDumpRenderTargets; // in viewpostprocess.cpp
 
@@ -152,6 +153,106 @@ void CGlowObjectManager::RenderGlowModels( const CViewSetup *pSetup, int nSplitS
 	pRenderContext->PopRenderTargetAndViewport();
 }
 
+static void BlurGlow_LowDef(IMatRenderContext *pRenderContext, float flBlurScale, int x, int y, int w, int h)
+{
+	pRenderContext->PushRenderTargetAndViewport();
+	ITexture *pSrc = materials->FindTexture( "_rt_FullFrameFB", TEXTURE_GROUP_RENDER_TARGET );
+	int nSrcWidth = pSrc->GetActualWidth();
+	int nSrcHeight = pSrc->GetActualHeight(); //,dest_height;
+
+	// Counter-Strike: Source uses a different downsample algorithm than other games
+	#ifdef CSTRIKE_DLL
+		IMaterial *downsample_mat = materials->FindMaterial( "dev/downsample_non_hdr_cstrike", TEXTURE_GROUP_OTHER, true);
+	#else
+		IMaterial *downsample_mat = materials->FindMaterial( "dev/downsample_non_hdr", TEXTURE_GROUP_OTHER, true);
+	#endif
+
+	IMaterial *xblur_mat = materials->FindMaterial( "dev/blurfilterx_nohdr", TEXTURE_GROUP_OTHER, true );
+	IMaterial *yblur_mat = materials->FindMaterial( "dev/blurfiltery_nohdr", TEXTURE_GROUP_OTHER, true );
+	IMaterial *upsample_mat = materials->FindMaterial( "dev/upsample_non_hdr", TEXTURE_GROUP_OTHER, true );
+	ITexture *dest_rt0 = materials->FindTexture( "_rt_SmallFB0", TEXTURE_GROUP_RENDER_TARGET );
+	ITexture *dest_rt1 = materials->FindTexture( "_rt_SmallFB1", TEXTURE_GROUP_RENDER_TARGET );
+
+	// *Everything* in here relies on the small RTs being exactly 1/4 the full FB res
+	Assert( dest_rt0->GetActualWidth()  == pSrc->GetActualWidth()  / 4 );
+	Assert( dest_rt0->GetActualHeight() == pSrc->GetActualHeight() / 4 );
+	Assert( dest_rt1->GetActualWidth()  == pSrc->GetActualWidth()  / 4 );
+	Assert( dest_rt1->GetActualHeight() == pSrc->GetActualHeight() / 4 );
+
+	// Downsample fb to rt0
+	pRenderContext->SetRenderTarget(dest_rt0);
+	pRenderContext->Viewport(0,0,dest_rt0->GetActualWidth(),dest_rt0->GetActualHeight());
+	// note the -2's below. Thats because we are downsampling on each axis and the shader
+	// accesses pixels on both sides of the source coord
+	pRenderContext->DrawScreenSpaceRectangle(	downsample_mat, 0, 0, nSrcWidth/4, nSrcHeight/4,
+												0, 0, nSrcWidth-2, nSrcHeight-2,
+												nSrcWidth, nSrcHeight );
+
+	if ( IsX360() )
+	{
+		pRenderContext->CopyRenderTargetToTextureEx( dest_rt0, 0, NULL, NULL );
+	}
+	else if ( g_bDumpRenderTargets )
+	{
+		DumpTGAofRenderTarget( nSrcWidth/4, nSrcHeight/4, "QuarterSizeFB" );
+	}
+
+	// Gaussian blur x rt0 to rt1
+	pRenderContext->SetRenderTarget(dest_rt1);
+	pRenderContext->Viewport(0,0,dest_rt1->GetActualWidth(),dest_rt1->GetActualHeight());
+	IMaterialVar *var = xblur_mat->FindVar( "$bloomamount", NULL );
+	var->SetFloatValue( flBlurScale );
+	pRenderContext->DrawScreenSpaceRectangle(	xblur_mat, 0, 0, nSrcWidth/4, nSrcHeight/4,
+												0, 0, nSrcWidth/4-1, nSrcHeight/4-1,
+												nSrcWidth/4, nSrcHeight/4 );
+	if ( IsX360() )
+	{
+		pRenderContext->CopyRenderTargetToTextureEx( dest_rt1, 0, NULL, NULL );
+	}
+	else if ( g_bDumpRenderTargets )
+	{
+		DumpTGAofRenderTarget( nSrcWidth/4, nSrcHeight/4, "BlurX" );
+	}
+
+	// Gaussian blur y rt1 to rt0
+	pRenderContext->SetRenderTarget(dest_rt0);
+	pRenderContext->Viewport(0,0,dest_rt0->GetActualWidth(),dest_rt0->GetActualHeight());
+	var = yblur_mat->FindVar( "$bloomamount", NULL );
+	var->SetFloatValue( flBlurScale );
+	pRenderContext->DrawScreenSpaceRectangle(	yblur_mat, 0, 0, nSrcWidth / 4, nSrcHeight / 4,
+												0, 0, nSrcWidth / 4 - 1, nSrcHeight / 4 - 1,
+												nSrcWidth / 4, nSrcHeight / 4 );
+	if ( IsX360() )
+	{
+		pRenderContext->CopyRenderTargetToTextureEx( dest_rt0, 0, NULL, NULL );
+	}
+	else if ( g_bDumpRenderTargets )
+	{
+		DumpTGAofRenderTarget( nSrcWidth/4, nSrcHeight/4, "BlurXY" );
+	}
+
+	// Upsample to pSrc
+	pRenderContext->SetRenderTarget(pSrc);
+	pRenderContext->Viewport(0,0,pSrc->GetActualWidth(),pSrc->GetActualHeight());
+	//IMaterialVar *pBaseTex = upsample_mat->FindVar( "$basetexture", NULL );
+	//pBaseTex->SetStringValue("_rt_SmallFB0");
+	//upsample_mat->Refresh();
+	pRenderContext->DrawScreenSpaceRectangle(	upsample_mat, 0, 0, nSrcWidth, nSrcHeight,
+												0, 0, nSrcWidth / 4 - 1, nSrcHeight / 4 - 1,
+												nSrcWidth / 4, nSrcHeight / 4 );
+
+	if ( IsX360() )
+	{
+		pRenderContext->CopyRenderTargetToTextureEx( pSrc, 0, NULL, NULL );
+	}
+	else if ( g_bDumpRenderTargets )
+	{
+		DumpTGAofRenderTarget( nSrcWidth, nSrcHeight, "Upsample" );
+	}
+
+	pRenderContext->PopRenderTargetAndViewport();
+}
+
 void CGlowObjectManager::ApplyEntityGlowEffects( const CViewSetup *pSetup, int nSplitScreenSlot, CMatRenderContextPtr &pRenderContext, float flBloomScale, int x, int y, int w, int h )
 {
 	//=======================================================//
@@ -276,9 +377,15 @@ void CGlowObjectManager::ApplyEntityGlowEffects( const CViewSetup *pSetup, int n
 	// Get material and texture pointers
 	ITexture *pRtQuarterSize1 = materials->FindTexture( "_rt_SmallFB1", TEXTURE_GROUP_RENDER_TARGET );
 
+	// Blur the glow.
+	if ( glow_blur_enabled.GetBool() )
+	{
+		BlurGlow_LowDef(pRenderContext, flBloomScale, pSetup->x, pSetup->y, pSetup->width, pSetup->height);
+	}
+
 	{
 		//=======================================================================================================//
-		// At this point, pRtQuarterSize0 is filled with the fully colored glow around everything as solid glowy //
+		// At this point, pRtQuarterSize1 is filled with the fully colored glow around everything as solid glowy //
 		// blobs. Now we need to stencil out the original objects by only writing pixels that have no            //
 		// stencil bits set in the range we care about.                                                          //
 		//=======================================================================================================//

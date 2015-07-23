@@ -785,6 +785,8 @@ CLIENTEFFECT_REGISTER_BEGIN( PrecachePostProcessingEffects )
 		CLIENTEFFECT_MATERIAL( "dev/downsample_non_hdr_cstrike" )
 	#else
 		CLIENTEFFECT_MATERIAL( "dev/downsample_non_hdr" )
+		// NEW!
+		CLIENTEFFECT_MATERIAL( "dev/upsample_non_hdr" )
 	#endif
 	CLIENTEFFECT_MATERIAL( "dev/no_pixel_write" )
 	CLIENTEFFECT_MATERIAL( "dev/lumcompare" )

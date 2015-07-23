@@ -41,31 +41,32 @@ VERSION 1.0
 
 DESCRIPTION INFO_OPTIONS
 {
-	"r_drawviewmodel" //the convar
+	"r_drawviewmodel"
 	{
-		"Draw viewmodel"  //the description
-		{ BOOL }  //the type of convar
-		{ "1" }  //the boolean value
-	}	
-	
-	"viewmodel_fov"  //the convar
-	{
-		"Viewmodel ield of view"  //the description
-		{ SLIDER 54 70 }  //the type of convar
-		{ "1" }  //the boolean value
+		"Draw viewmodel"
+		{ BOOL }
+		{ "1" }
 	}
-    
-    "cl_allow_quick_jump"
-    {
-        "Quick jump: holding down +jump allows continual jumping"
-        { BOOL }
-        { "0" }
-    }
-    
-    "cl_weapon_glow"
-    {
-        "Nearby weapon pickups glow"
-        { BOOL }
-        { 1 }
-    }
+
+	"viewmodel_fov"
+	{
+		"Viewmodel field of view"
+		{ SLIDER 54 70 }
+		{ "54" }
+	}
+
+	"cl_allow_quick_jump"
+	{
+		"Quick jump: holding down +jump allows continual jumping"
+		{ BOOL }
+		{ "1" }
+	}
+
+	"cl_weapon_glow"
+	{
+		"Nearby weapon pickups glow"
+		{ BOOL }
+		{ "1" }
+	}
+
 }
