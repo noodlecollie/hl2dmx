@@ -270,8 +270,13 @@ void C_HL2MP_Player::ClientThink( void )
 	// We find nearby weapons here and add them to the list if they are valid.
 	// We then iterate over the list to set or unset the glow.
 	// This isn't the neatest way of doing this, but using CUtlHash was proving difficult.
+
+	// TESTING: Exit out if we're not the local player.
+	// Turns out ClientThink() runs on every clientside player entity, not just the user's.
+	if ( this != C_BasePlayer::GetLocalPlayer() ) return;
+
 	C_BaseEntity* ents[256];
-	Vector org = GetLocalOrigin();
+	Vector org = EyePosition();
 	int entCount = UTIL_EntitiesInSphere(ents, 256, org, NEARBY_WEAPON_GLOW_RADIUS, 0);
 
 	// Find new weapons if we have space for them.
@@ -338,11 +343,17 @@ void C_HL2MP_Player::ClientThink( void )
 	if ( removed ) PruneGlowWeapons();
 }
 
-bool C_HL2MP_Player::EntityWithinGlowRange(C_BaseEntity* e) const
+bool C_HL2MP_Player::EntityWithinGlowRange(C_BaseEntity* e)
 {
-	Vector org = GetLocalOrigin();
+	Vector org = EyePosition();
 	Vector worg = e->GetLocalOrigin();
-	return (worg - org).LengthSqr() <= NEARBY_WEAPON_GLOW_RADIUS * NEARBY_WEAPON_GLOW_RADIUS;
+	Vector dir = (worg - org).Normalized();
+
+	Vector vdir;
+	AngleVectors(EyeAngles(), &vdir);
+
+	return ((worg - org).LengthSqr() <= NEARBY_WEAPON_GLOW_RADIUS * NEARBY_WEAPON_GLOW_RADIUS) &&
+		(DotProduct(dir, vdir) >= 0.98);	// Roughly 11.25 degrees
 }
 
 bool C_HL2MP_Player::HandleWeaponGlow(const EHANDLE &e)

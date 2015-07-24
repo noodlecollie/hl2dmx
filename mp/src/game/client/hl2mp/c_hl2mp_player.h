@@ -137,7 +137,7 @@ private:
 	bool IsCachedGlowWeapon(const EHANDLE &e) const;
 	void PruneGlowWeapons();
 	void RemoveGlowWeapon(int i);
-	bool EntityWithinGlowRange(C_BaseEntity* e) const;
+	bool EntityWithinGlowRange(C_BaseEntity* e);
 };
 
 inline C_HL2MP_Player *ToHL2MPPlayer( CBaseEntity *pEntity )
