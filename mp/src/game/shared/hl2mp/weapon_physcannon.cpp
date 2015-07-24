@@ -54,15 +54,16 @@ static const char *s_pWaitForUpgradeContext = "WaitForUpgrade";
 
 ConVar	g_debug_physcannon( "g_debug_physcannon", "0", FCVAR_REPLICATED | FCVAR_CHEAT );
 
-ConVar physcannon_minforce( "physcannon_minforce", "700", FCVAR_REPLICATED | FCVAR_CHEAT );
-ConVar physcannon_maxforce( "physcannon_maxforce", "1500", FCVAR_REPLICATED | FCVAR_CHEAT );
-ConVar physcannon_maxmass( "physcannon_maxmass", "250", FCVAR_REPLICATED | FCVAR_CHEAT );
-ConVar physcannon_tracelength( "physcannon_tracelength", "250", FCVAR_REPLICATED | FCVAR_CHEAT );
-ConVar physcannon_chargetime("physcannon_chargetime", "2", FCVAR_REPLICATED | FCVAR_CHEAT );
-ConVar physcannon_pullforce( "physcannon_pullforce", "4000", FCVAR_REPLICATED | FCVAR_CHEAT );
-ConVar physcannon_cone( "physcannon_cone", "0.97", FCVAR_REPLICATED | FCVAR_CHEAT );
-ConVar physcannon_ball_cone( "physcannon_ball_cone", "0.997", FCVAR_REPLICATED | FCVAR_CHEAT );
-ConVar player_throwforce( "player_throwforce", "1000", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar physcannon_minforce			( "physcannon_minforce", "700", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar physcannon_maxforce			( "physcannon_maxforce", "1500", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar physcannon_player_puntforce	( "physcannon_player_puntforce", "1500.0", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar physcannon_maxmass			( "physcannon_maxmass", "250", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar physcannon_tracelength		( "physcannon_tracelength", "250", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar physcannon_chargetime		( "physcannon_chargetime", "2", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar physcannon_pullforce			( "physcannon_pullforce", "4000", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar physcannon_cone				( "physcannon_cone", "0.97", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar physcannon_ball_cone			( "physcannon_ball_cone", "0.997", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar player_throwforce			( "player_throwforce", "1000", FCVAR_REPLICATED | FCVAR_CHEAT );
 
 #ifndef CLIENT_DLL
 extern ConVar hl2_normspeed;
@@ -1142,8 +1143,8 @@ protected:
 	void	DestroyEffects( void );	// Destroy all sprites and beams
 
 	// Punt objects - this is pointing at an object in the world and applying a force to it.
-	void	PuntNonVPhysics( CBaseEntity *pEntity, const Vector &forward, trace_t &tr );
-	void	PuntVPhysics( CBaseEntity *pEntity, const Vector &forward, trace_t &tr );
+	void	PuntNonVPhysics ( CBaseEntity *pEntity, const Vector &forward, trace_t &tr );
+	void	PuntVPhysics    ( CBaseEntity *pEntity, const Vector &forward, trace_t &tr );
 
 	// Velocity-based throw common to punt and launch code.
 	void	ApplyVelocityBasedForce( CBaseEntity *pEntity, const Vector &forward );
@@ -1591,7 +1592,12 @@ void CWeaponPhysCannon::PuntNonVPhysics( CBaseEntity *pEntity, const Vector &for
 	info.SetInflictor( this );
 	info.SetDamage( 1.0f );
 	info.SetDamageType( DMG_CRUSH | DMG_PHYSGUN );
-	info.SetDamageForce( forward );	// Scale?
+
+	if (pEntity->IsPlayer())
+		pEntity->VelocityPunch( physcannon_player_puntforce.GetFloat() * forward );
+	else
+		info.SetDamageForce( forward );	// Scale?
+
 	info.SetDamagePosition( tr.endpos );
 
 	m_hLastPuntedObject = pEntity;
@@ -1895,7 +1901,8 @@ void CWeaponPhysCannon::PrimaryAttack( void )
 			// Don't let the player zap any NPC's except regular antlions and headcrabs.
 			if( pEntity->IsPlayer() )
 			{
-				DryFire();
+				PuntNonVPhysics( pEntity, forward, tr );
+				//DryFire();
 				return;
 			}
 		}

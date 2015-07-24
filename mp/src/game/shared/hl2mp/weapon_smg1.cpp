@@ -12,6 +12,7 @@
 	#include "c_hl2mp_player.h"
 #else
 	#include "grenade_ar2.h"
+	#include "../server/hl2/grenade_frag.h"
 	#include "hl2mp_player.h"
 	#include "basegrenade_shared.h"
 #endif
@@ -28,6 +29,8 @@
 
 #define SMG1_GRENADE_DAMAGE 100.0f
 #define SMG1_GRENADE_RADIUS 250.0f
+
+ConVar sv_smg1_frag ( "sv_smg1_frag", "0" );
 
 class CWeaponSMG1 : public CHL2MPMachineGun
 {
@@ -114,7 +117,10 @@ CWeaponSMG1::CWeaponSMG1( )
 void CWeaponSMG1::Precache( void )
 {
 #ifndef CLIENT_DLL
-	UTIL_PrecacheOther("grenade_ar2");
+	if (sv_smg1_frag.GetBool())
+		UTIL_PrecacheOther("grenade_frag");
+	else
+		UTIL_PrecacheOther("grenade_ar2");
 #endif
 
 	BaseClass::Precache();
@@ -221,14 +227,23 @@ void CWeaponSMG1::SecondaryAttack( void )
 	
 #ifndef CLIENT_DLL
 	//Create the grenade
-	CGrenadeAR2 *pGrenade = (CGrenadeAR2*)Create( "grenade_ar2", vecSrc, vec3_angle, pPlayer );
-	pGrenade->SetAbsVelocity( vecThrow );
+	if (sv_smg1_frag.GetBool())
+	{
+		CBaseGrenade *pGrenade0 = Fraggrenade_Create( vecSrc, vec3_angle, vecThrow, RandomAngularImpulse( -400, 400 ), pPlayer, 5, false );
+		pGrenade0->SetDamage( SMG1_GRENADE_DAMAGE );
+		pGrenade0->SetDamageRadius( SMG1_GRENADE_RADIUS );
+	}
+	else
+	{
+		CGrenadeAR2 *pGrenade = (CGrenadeAR2*)Create( "grenade_ar2", vecSrc, vec3_angle, pPlayer );
+		pGrenade->SetAbsVelocity( vecThrow );
 
-	pGrenade->SetLocalAngularVelocity( RandomAngle( -400, 400 ) );
-	pGrenade->SetMoveType( MOVETYPE_FLYGRAVITY, MOVECOLLIDE_FLY_BOUNCE ); 
-	pGrenade->SetThrower( GetOwner() );
-	pGrenade->SetDamage( SMG1_GRENADE_DAMAGE );
-	pGrenade->SetDamageRadius( SMG1_GRENADE_RADIUS );
+		pGrenade->SetLocalAngularVelocity( RandomAngle( -400, 400 ) );
+		pGrenade->SetMoveType( MOVETYPE_FLYGRAVITY, MOVECOLLIDE_FLY_BOUNCE ); 
+		pGrenade->SetThrower( GetOwner() );
+		pGrenade->SetDamage( SMG1_GRENADE_DAMAGE );
+		pGrenade->SetDamageRadius( SMG1_GRENADE_RADIUS );
+	}
 #endif
 
 	SendWeaponAnim( ACT_VM_SECONDARYATTACK );
