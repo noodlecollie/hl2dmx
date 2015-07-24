@@ -281,8 +281,9 @@ void C_HL2MP_Player::ClientThink( void )
 		for ( int i = 0; i < entCount; i++ )
 		{
 			C_BaseCombatWeapon* w = dynamic_cast<C_BaseCombatWeapon*>(ents[i]);
-			if ( w && !dynamic_cast<C_HL2MP_Player*>(w->GetOwnerEntity()) )
+			if ( w )
 			{
+				if ( dynamic_cast<C_HL2MP_Player*>(w->GetOwnerEntity()) ) continue;
 				EHANDLE e(w);
 				if ( !IsCachedGlowWeapon(e) && m_iGlowWeaponCount < MAX_GLOW_WEAPONS )
 				{
@@ -295,8 +296,9 @@ void C_HL2MP_Player::ClientThink( void )
 
 			// CItem's been networked specifically for this purpose.
 			C_Item* item = dynamic_cast<C_Item*>(ents[i]);
-			if ( item && !dynamic_cast<C_HL2MP_Player*>(item->GetOwnerEntity()) )
+			if ( item )
 			{
+				if ( dynamic_cast<C_HL2MP_Player*>(item->GetOwnerEntity()) ) continue;
 				EHANDLE e(item);
 				if ( !IsCachedGlowWeapon(e) && m_iGlowWeaponCount < MAX_GLOW_WEAPONS )
 				{
@@ -315,8 +317,8 @@ void C_HL2MP_Player::ClientThink( void )
 	bool removed = false;
 	for ( int i = 0; i < m_iGlowWeaponCount; i++ )
 	{
-		EHANDLE e = m_GlowWeapons[i];
-		if ( !e.Get() )
+		EHANDLE &e = m_GlowWeapons[i];
+		if ( !e.Get() || !e.IsValid() )
 		{
 			e.Term();
 			removed = true;
@@ -333,7 +335,7 @@ void C_HL2MP_Player::ClientThink( void )
 	}
 
 	// Prune the list.
-	PruneGlowWeapons();
+	if ( removed ) PruneGlowWeapons();
 }
 
 bool C_HL2MP_Player::EntityWithinGlowRange(C_BaseEntity* e) const
