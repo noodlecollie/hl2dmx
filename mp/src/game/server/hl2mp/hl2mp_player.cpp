@@ -1548,6 +1548,14 @@ CHL2MPPlayerStateInfo *CHL2MP_Player::State_LookupInfo( HL2MPPlayerState state )
 	return NULL;
 }
 
+void CHL2MP_Player::DoStomp(CBaseEntity* ent)
+{
+	char text[256];
+	Q_snprintf( text,sizeof(text), "Landed hard on %s.", ent->GetClassname());
+
+	UTIL_ClientPrintAll( HUD_PRINTTALK, text );
+}
+
 bool CHL2MP_Player::StartObserverMode(int mode)
 {
 	//we only want to go into observer mode if the player asked to, not on a death timeout

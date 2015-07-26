@@ -36,6 +36,8 @@
 
 ConVar g_Language( "g_Language", "0", FCVAR_REPLICATED );
 ConVar sk_autoaim_mode( "sk_autoaim_mode", "1", FCVAR_ARCHIVE | FCVAR_REPLICATED );
+ConVar sv_max_fov( "sv_max_fov", "90", FCVAR_REPLICATED );
+ConVar sv_min_fov( "sv_min_fov", "75", FCVAR_REPLICATED );
 
 #ifndef CLIENT_DLL
 ConVar log_verbose_enable( "log_verbose_enable", "0", FCVAR_GAMEDLL, "Set to 1 to enable verbose server log on the server." );
@@ -859,7 +861,7 @@ void CGameRules::ClientSettingsChanged( CBasePlayer *pPlayer )
 	if ( pszFov )
 	{
 		int iFov = atoi(pszFov);
-		iFov = clamp( iFov, 75, 90 );
+		iFov = clamp( iFov, sv_min_fov.GetInt(), sv_max_fov.GetInt() );
 		pPlayer->SetDefaultFOV( iFov );
 	}
 

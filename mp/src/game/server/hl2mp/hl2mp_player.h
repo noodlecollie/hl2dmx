@@ -107,6 +107,8 @@ public:
 	
 	void  DetonateTripmines( void );
 
+	virtual void  DoStomp( CBaseEntity* ent );
+
 	void Reset();
 
 	bool IsReady();

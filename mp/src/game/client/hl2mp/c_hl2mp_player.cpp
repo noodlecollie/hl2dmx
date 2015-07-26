@@ -44,6 +44,7 @@ END_PREDICTION_DATA()
 #define NEARBY_WEAPON_GLOW_RADIUS 180
 
 static ConVar cl_playermodel( "cl_playermodel", "none", FCVAR_USERINFO | FCVAR_ARCHIVE | FCVAR_SERVER_CAN_EXECUTE, "Default Player Model");
+static ConVar cl_autosprint( "cl_autosprint", "0", FCVAR_USERINFO, "Autosprint");
 static ConVar cl_defaultweapon( "cl_defaultweapon", "weapon_physcannon", FCVAR_USERINFO | FCVAR_ARCHIVE, "Default Spawn Weapon");
 static ConVar cl_weapon_glow( "cl_weapon_glow", "1", FCVAR_ARCHIVE | FCVAR_CLIENTDLL, "Whether nearby weapon pickups should have an outline glow.");
 
@@ -331,7 +332,9 @@ void C_HL2MP_Player::ClientThink( void )
 		}
 
 		bool shouldGlow = HandleWeaponGlow(e) && glowCvar;
+#ifdef GLOWS_ENABLE
 		e.Get()->SetClientsideGlowEnabled(shouldGlow);
+#endif // GLOWS_ENABLE
 		if ( !shouldGlow )
 		{
 			e.Term();
@@ -695,7 +698,7 @@ Vector C_HL2MP_Player::GetAutoaimVector( float flDelta )
 //-----------------------------------------------------------------------------
 bool C_HL2MP_Player::CanSprint( void )
 {
-	return ( (!m_Local.m_bDucked && !m_Local.m_bDucking) && (GetWaterLevel() != 3) );
+	return ( (!m_Local.m_bDucked && !m_Local.m_bDucking) && !(GetAbsVelocity().IsZero(0.01)) && (GetWaterLevel() != 3) );
 }
 
 
@@ -715,7 +718,9 @@ void C_HL2MP_Player::StartSprinting( void )
 
 	CPASAttenuationFilter filter( this );
 	filter.UsePredictionRules();
-	EmitSound( filter, entindex(), "HL2Player.SprintStart" );
+
+	if (!cl_autosprint.GetBool())
+		EmitSound( filter, entindex(), "HL2Player.SprintStart" );
 
 	SetMaxSpeed( HL2_SPRINT_SPEED );
 	m_fIsSprinting = true;
@@ -734,7 +739,14 @@ void C_HL2MP_Player::HandleSpeedChanges( void )
 {
 	int buttonsChanged = m_afButtonPressed | m_afButtonReleased;
 
-	if( buttonsChanged & IN_SPEED )
+	if (cl_autosprint.GetBool())
+	{
+		if (CanSprint() && !IsSprinting() && IsSuitEquipped())
+			StartSprinting();
+		else if (IsSprinting())
+			StopSprinting();
+	}
+	else if( (buttonsChanged & IN_SPEED) )
 	{
 		// The state of the sprint/run button has changed.
 		if ( IsSuitEquipped() )
@@ -768,6 +780,9 @@ void C_HL2MP_Player::HandleSpeedChanges( void )
 			}
 			else if( !IsWalking() && !IsSprinting() && (m_afButtonPressed & IN_WALK) && !(m_nButtons & IN_DUCK) )
 			{
+				if (cl_autosprint.GetBool() && IsSprinting())
+					StopSprinting();
+
 				StartWalking();
 			}
 		}

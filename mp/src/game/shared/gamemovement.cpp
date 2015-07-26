@@ -84,6 +84,7 @@ extern IGameMovement *g_pGameMovement;
 
 // NEW: Allow holding down space to let the player jump as soon as they hit the ground.
 ConVar mp_allow_quick_jump( "mp_allow_quick_jump", "0", FCVAR_NOTIFY | FCVAR_REPLICATED, "If set, lets players hold down +jump to jump continuously." );
+ConVar mp_jump_count( "mp_jump_count", "1", FCVAR_NOTIFY | FCVAR_REPLICATED, "If set to >1, players can air jump to change direction." );
 
 #if defined( PLAYER_GETTING_STUCK_TESTING )
 
@@ -3939,6 +3940,9 @@ void CGameMovement::CheckFalling( void )
 				// If they hit the ground going this fast they may take damage (and die).
 				//
 				bAlive = MoveHelper( )->PlayerFallingDamage();
+
+				player->DoStomp(player->GetGroundEntity());
+
 				fvol = 1.0;
 			}
 			else if ( player->m_Local.m_flFallVelocity > PLAYER_MAX_SAFE_FALL_SPEED / 2 )
