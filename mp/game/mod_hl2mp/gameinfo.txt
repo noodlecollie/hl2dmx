@@ -1,6 +1,10 @@
 "GameInfo"
 {
+<<<<<<< HEAD
 	game	"HL2DMX"
+=======
+	game	"Hl2DMX"
+>>>>>>> cc276018d93e08b52ad54d0c07e884d450f3ec51
 	title	"HALF+LIFE'"
 	title2	"deathmatch"
 	type multiplayer_only

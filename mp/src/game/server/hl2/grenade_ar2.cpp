@@ -33,7 +33,9 @@ extern ConVar    sk_plr_dmg_smg1_grenade;
 extern ConVar    sk_npc_dmg_smg1_grenade;
 extern ConVar    sk_max_smg1_grenade;
 
-ConVar	  sk_smg1_grenade_radius		( "sk_smg1_grenade_radius","0");
+ConVar	  sk_smg1_grenade_radius		( "sk_smg1_grenade_radius", "0" );
+ConVar	  sv_smg1_grenade_phys			( "sv_smg1_grenade_phys"  , "0" );
+ConVar	  sv_smg1_grenade_melon			( "sv_smg1_grenade_melon"  , "0" );
 
 ConVar g_CV_SmokeTrail("smoke_trail", "1", 0); // temporary dust explosion switch
 
@@ -58,9 +60,21 @@ void CGrenadeAR2::Spawn( void )
 	SetMoveType( MOVETYPE_FLYGRAVITY, MOVECOLLIDE_FLY_BOUNCE );
 
 	// Hits everything but debris
-	SetCollisionGroup( COLLISION_GROUP_PROJECTILE );
+	if (sv_smg1_grenade_phys.GetBool())
+	{
+		SetCollisionGroup( COLLISION_GROUP_WEAPON );
+		VPhysicsInitNormal( SOLID_BBOX, 0, false );
+	}
+	else
+	{
+		SetCollisionGroup( COLLISION_GROUP_PROJECTILE );
+	}
+	
+	if (sv_smg1_grenade_melon.GetBool())
+		SetModel( "models/props_junk/watermelon01.mdl" );
+	else
+		SetModel( "models/Weapons/ar2_grenade.mdl");
 
-	SetModel( "models/Weapons/ar2_grenade.mdl");
 	UTIL_SetSize(this, Vector(-3, -3, -3), Vector(3, 3, 3));
 //	UTIL_SetSize(this, Vector(0, 0, 0), Vector(0, 0, 0));
 

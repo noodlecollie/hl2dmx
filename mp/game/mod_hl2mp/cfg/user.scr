@@ -32,7 +32,11 @@
 
 
 // Half-Life User Info Configuration Layout Script (stores last settings chosen, too)
+<<<<<<< HEAD
 // File generated:  Fri Jul 24 22:57:03 AM
+=======
+// File generated:  Fri Jul 24 14:57:04 AM
+>>>>>>> cc276018d93e08b52ad54d0c07e884d450f3ec51
 //
 //
 // Cvar	-	Setting
