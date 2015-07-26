@@ -265,16 +265,30 @@ void C_HL2MP_Player::ClientThink( void )
 	}
 
 	UpdateIDTarget();
+	ManageGlowWeapons();
+}
 
+void C_HL2MP_Player::ManageGlowWeapons()
+{
 	// NEW: Highlight pickup-able weapons.
 	// We find nearby weapons here and add them to the list if they are valid.
 	// We then iterate over the list to set or unset the glow.
 	// This isn't the neatest way of doing this, but using CUtlHash was proving difficult.
 
-	// TESTING: Exit out if we're not the local player.
+	// Exit out if we're not the local player.
 	// Turns out ClientThink() runs on every clientside player entity, not just the user's.
 	if ( this != C_BasePlayer::GetLocalPlayer() ) return;
 
+	ScanForNewGlowWeapons();
+
+	// Iterate over the list and set the glow states.
+	// To remove a cached weapon, the EHANDLE is terminated.
+	// If a removal took place, prune the list.
+	if ( SetGlowWeaponStates() ) PruneGlowWeapons();
+}
+
+void C_HL2MP_Player::ScanForNewGlowWeapons()
+{
 	C_BaseEntity* ents[256];
 	Vector org = EyePosition();
 	int entCount = UTIL_EntitiesInSphere(ents, 256, org, NEARBY_WEAPON_GLOW_RADIUS, 0);
@@ -292,7 +306,8 @@ void C_HL2MP_Player::ClientThink( void )
 				EHANDLE e(w);
 				if ( !IsCachedGlowWeapon(e) && m_iGlowWeaponCount < MAX_GLOW_WEAPONS )
 				{
-					m_GlowWeapons[m_iGlowWeaponCount] = e;
+					m_GlowWeapons[m_iGlowWeaponCount].weapon = e;
+					m_GlowWeapons[m_iGlowWeaponCount].processed = false;
 					m_iGlowWeaponCount++;
 				}
 
@@ -307,7 +322,8 @@ void C_HL2MP_Player::ClientThink( void )
 				EHANDLE e(item);
 				if ( !IsCachedGlowWeapon(e) && m_iGlowWeaponCount < MAX_GLOW_WEAPONS )
 				{
-					m_GlowWeapons[m_iGlowWeaponCount] = e;
+					m_GlowWeapons[m_iGlowWeaponCount].weapon = e;
+					m_GlowWeapons[m_iGlowWeaponCount].processed = false;
 					m_iGlowWeaponCount++;
 				}
 
@@ -315,14 +331,15 @@ void C_HL2MP_Player::ClientThink( void )
 			}
 		}
 	}
+}
 
-	// Iterate over the list and set the glow states.
-	// To remove a cached weapon, the EHANDLE is terminated.
-	// The next pass prunes the list.
+bool C_HL2MP_Player::SetGlowWeaponStates()
+{
 	bool removed = false;
+	bool glowCvar = cl_weapon_glow.GetBool();
 	for ( int i = 0; i < m_iGlowWeaponCount; i++ )
 	{
-		EHANDLE &e = m_GlowWeapons[i];
+		EHANDLE &e = m_GlowWeapons[i].weapon;
 		if ( !e.Get() || !e.IsValid() )
 		{
 			e.Term();
@@ -331,7 +348,16 @@ void C_HL2MP_Player::ClientThink( void )
 		}
 
 		bool shouldGlow = HandleWeaponGlow(e) && glowCvar;
-		e.Get()->SetClientsideGlowEnabled(shouldGlow);
+
+		// Now that the client glow function counts references, ensure that we only call enable if we haven't called it before.
+		// If we call disable then the weapon will be removed afterwards anyway, so it'll only get called this once.
+		if ( !m_GlowWeapons[i].processed || !shouldGlow )
+		{
+			e.Get()->SetClientsideGlowEnabled(shouldGlow);
+			m_GlowWeapons[i].processed = true;
+		}
+
+		// If our glow was disabled, remove us from the list.
 		if ( !shouldGlow )
 		{
 			e.Term();
@@ -339,8 +365,7 @@ void C_HL2MP_Player::ClientThink( void )
 		}
 	}
 
-	// Prune the list.
-	if ( removed ) PruneGlowWeapons();
+	return removed;
 }
 
 bool C_HL2MP_Player::EntityWithinGlowRange(C_BaseEntity* e)
@@ -374,7 +399,7 @@ void C_HL2MP_Player::PruneGlowWeapons()
 	// Iterate down for speed.
 	for ( int i = m_iGlowWeaponCount - 1; i >= 0; i-- )	// Iteration handled manually
 	{
-		if ( !m_GlowWeapons[i].IsValid() ) RemoveGlowWeapon(i);
+		if ( !m_GlowWeapons[i].weapon.IsValid() ) RemoveGlowWeapon(i);
 	}
 }
 
@@ -386,7 +411,7 @@ void C_HL2MP_Player::RemoveGlowWeapon(int i)
 	}
 
 	// Just in case
-	m_GlowWeapons[m_iGlowWeaponCount-1].Term();
+	m_GlowWeapons[m_iGlowWeaponCount-1].weapon.Term();
 	m_iGlowWeaponCount--;
 }
 
@@ -394,7 +419,7 @@ bool C_HL2MP_Player::IsCachedGlowWeapon(const EHANDLE &e) const
 {
 	for ( int i = 0; i < m_iGlowWeaponCount; i++ )
 	{
-		if ( m_GlowWeapons[i] == e ) return true;
+		if ( m_GlowWeapons[i].weapon == e ) return true;
 	}
 
 	return false;

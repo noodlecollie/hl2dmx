@@ -2468,6 +2468,23 @@ void CWeaponPhysCannon::ManagePredictedObject( void )
 		}
 	}
 
+	// Make the held object glow.
+	// Only call the glow function when the value actually changes.
+	if ( m_hOldAttachedObject != m_hAttachedObject )
+	{
+		// Disable the glow on the old object.
+		if ( m_hOldAttachedObject.Get() )
+		{
+			m_hOldAttachedObject.Get()->SetClientsideGlowEnabled(false);
+		}
+
+		// Enable the glow on the new object.
+		if ( pAttachedObject )
+		{
+			pAttachedObject->SetClientsideGlowEnabled(true);
+		}
+	}
+
 	m_hOldAttachedObject = m_hAttachedObject;
 }
 

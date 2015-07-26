@@ -1712,8 +1712,12 @@ protected:
 public:
 	CGlowObject			*GetGlowObject( void ){ return m_pGlowEffect; }
 	virtual void		GetGlowEffectColor( float *r, float *g, float *b );
+
 	bool				IsClientsideGlowEnabled() const;
 	void				SetClientsideGlowEnabled(bool enabled);
+	void				ClearClientsideGlow();
+	const Vector&		GetClientsideGlowColor() const;
+	void				SetClientsideGlowColor(const Vector &col);
 
 protected:
 	virtual void		UpdateGlowEffect( void );
@@ -1722,8 +1726,9 @@ protected:
 private:
 	bool				m_bGlowEnabled;
 	bool				m_bOldGlowEnabled;
-	bool				m_bClientsideGlowEnabled;
+	int					m_iClientsideGlowRefCount;
 	CGlowObject			*m_pGlowEffect;
+	Vector				m_vecClientsideGlowColor;
 #endif // GLOWS_ENABLE
 };
 

@@ -131,13 +131,22 @@ private:
 	bool m_fIsWalking;
 
 	// Forget mucking about with hash tables
-	EHANDLE m_GlowWeapons[MAX_GLOW_WEAPONS];
+	struct GlowWeaponEntry_t
+	{
+		EHANDLE weapon;	// Handle to weapon
+		bool processed;	// Whether we have set the glow state on this weapon yet
+	};
+
+	GlowWeaponEntry_t m_GlowWeapons[MAX_GLOW_WEAPONS];
 	int m_iGlowWeaponCount;
 	bool HandleWeaponGlow(const EHANDLE &e);
 	bool IsCachedGlowWeapon(const EHANDLE &e) const;
 	void PruneGlowWeapons();
 	void RemoveGlowWeapon(int i);
 	bool EntityWithinGlowRange(C_BaseEntity* e);
+	void ManageGlowWeapons();
+	void ScanForNewGlowWeapons();
+	bool SetGlowWeaponStates();	// Returns true if any glow weapons were invalidated.
 };
 
 inline C_HL2MP_Player *ToHL2MPPlayer( CBaseEntity *pEntity )

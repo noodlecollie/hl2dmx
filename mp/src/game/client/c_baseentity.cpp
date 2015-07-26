@@ -978,7 +978,8 @@ C_BaseEntity::C_BaseEntity() :
 	m_pGlowEffect = NULL;
 	m_bGlowEnabled = false;
 	m_bOldGlowEnabled = false;
-	m_bClientsideGlowEnabled = false;
+	m_iClientsideGlowRefCount = 0;
+	m_vecClientsideGlowColor = Vector(0.76f, 0.76f, 0.76f);
 #endif // GLOWS_ENABLE
 }
 
@@ -6555,10 +6556,16 @@ void C_BaseEntity::UpdateGlowEffect( void )
 
 	// create a new effect
 	// Server-side takes priority.
-	if ( m_bGlowEnabled || m_bClientsideGlowEnabled )
+	if ( m_bGlowEnabled || IsClientsideGlowEnabled() )
 	{
 		float r, g, b;
-		GetGlowEffectColor( &r, &g, &b );
+		if ( m_bGlowEnabled ) GetGlowEffectColor( &r, &g, &b );
+		else
+		{
+			r = m_vecClientsideGlowColor.x;
+			g = m_vecClientsideGlowColor.y;
+			b = m_vecClientsideGlowColor.z;
+		}
 
 		m_pGlowEffect = new CGlowObject( this, Vector( r, g, b ), 1.0, true );
 	}
@@ -6578,14 +6585,25 @@ void C_BaseEntity::DestroyGlowEffect( void )
 
 bool C_BaseEntity::IsClientsideGlowEnabled() const
 {
-	return m_bClientsideGlowEnabled;
+	return m_iClientsideGlowRefCount > 0;
 }
 
 void C_BaseEntity::SetClientsideGlowEnabled(bool enabled)
 {
-	if ( enabled == m_bClientsideGlowEnabled ) return;
+	int oldVal = m_iClientsideGlowRefCount;
 
-	m_bClientsideGlowEnabled = enabled;
+	if ( enabled ) m_iClientsideGlowRefCount++;
+	else m_iClientsideGlowRefCount--;
+	if ( m_iClientsideGlowRefCount < 0 ) m_iClientsideGlowRefCount = 0;
+
+	if ( oldVal == 0 && m_iClientsideGlowRefCount > 0 || oldVal > 0 && m_iClientsideGlowRefCount == 0 ) UpdateGlowEffect();
+}
+
+void C_BaseEntity::ClearClientsideGlow()
+{
+	if ( m_iClientsideGlowRefCount == 0 ) return;
+
+	m_iClientsideGlowRefCount = 0;
 	UpdateGlowEffect();
 }
 #endif // GLOWS_ENABLE
