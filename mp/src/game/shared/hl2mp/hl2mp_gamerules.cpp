@@ -44,6 +44,7 @@ extern bool FindInList( const char **pStrings, const char *pToFind );
 ConVar sv_hl2mp_weapon_respawn_time( "sv_hl2mp_weapon_respawn_time", "20", FCVAR_GAMEDLL | FCVAR_NOTIFY );
 ConVar sv_hl2mp_item_respawn_time( "sv_hl2mp_item_respawn_time", "30", FCVAR_GAMEDLL | FCVAR_NOTIFY );
 ConVar sv_report_client_settings("sv_report_client_settings", "0", FCVAR_GAMEDLL | FCVAR_NOTIFY );
+ConVar sv_allow_thirdperson("sv_allow_thirdperson", "0", FCVAR_REPLICATED | FCVAR_NOTIFY );
 
 extern ConVar mp_chattime;
 
@@ -289,6 +290,10 @@ void CHL2MPRules::PlayerKilled( CBasePlayer *pVictim, const CTakeDamageInfo &inf
 #endif
 }
 
+bool CHL2MPRules::AllowThirdPersonCamera( void )
+{
+	return cvar->FindVar("sv_allow_thirdperson")->GetBool();
+}
 
 void CHL2MPRules::Think( void )
 {

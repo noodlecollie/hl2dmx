@@ -278,7 +278,7 @@ public:
 	virtual void			CorpseFade( void );	// Called instead of GibNPC() when gibs are disabled
 	virtual bool			HasHumanGibs( void );
 	virtual bool			HasAlienGibs( void );
-	virtual bool			ShouldGib( const CTakeDamageInfo &info ) { return false; }	// Always ragdoll, unless specified by the leaf class
+	virtual bool			ShouldGib( const CTakeDamageInfo &info ) { return (info.GetDamageType() & DMG_ALWAYSGIB) != 0; }	// Always ragdoll, unless specified by the leaf class
 
 	float GetDamageAccumulator() { return m_flDamageAccumulator; }
 	int	  GetDamageCount( void ) { return m_iDamageCount; }	// # of times NPC has been damaged.  used for tracking 1-shot kills.
