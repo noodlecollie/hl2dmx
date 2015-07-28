@@ -64,6 +64,8 @@ ConVar physcannon_pullforce			( "physcannon_pullforce", "4000", FCVAR_REPLICATED
 ConVar physcannon_cone				( "physcannon_cone", "0.97", FCVAR_REPLICATED | FCVAR_CHEAT );
 ConVar physcannon_ball_cone			( "physcannon_ball_cone", "0.997", FCVAR_REPLICATED | FCVAR_CHEAT );
 ConVar player_throwforce			( "player_throwforce", "1000", FCVAR_REPLICATED | FCVAR_CHEAT );
+ConVar physcannon_self_punt			( "physcannon_self_punt", "200.0", FCVAR_REPLICATED );
+ConVar physcannon_self_pull			( "physcannon_self_pull", "500.0", FCVAR_REPLICATED );
 
 #ifndef CLIENT_DLL
 extern ConVar hl2_normspeed;
@@ -1584,8 +1586,10 @@ void CWeaponPhysCannon::PuntNonVPhysics( CBaseEntity *pEntity, const Vector &for
 {
 	if ( m_hLastPuntedObject == pEntity && gpGlobals->curtime < m_flRepuntObjectTime )
 		return;
-
+	
 #ifndef CLIENT_DLL
+	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
+
 	CTakeDamageInfo	info;
 	
 	info.SetAttacker( GetOwner() );
@@ -1594,9 +1598,14 @@ void CWeaponPhysCannon::PuntNonVPhysics( CBaseEntity *pEntity, const Vector &for
 	info.SetDamageType( DMG_CRUSH | DMG_PHYSGUN );
 
 	if (pEntity->IsPlayer())
+	{
 		pEntity->VelocityPunch( physcannon_player_puntforce.GetFloat() * forward );
+		pOwner-> VelocityPunch( -physcannon_self_punt.GetFloat() * forward);
+	}
 	else
+	{
 		info.SetDamageForce( forward );	// Scale?
+	}
 
 	info.SetDamagePosition( tr.endpos );
 
@@ -1644,7 +1653,6 @@ void CWeaponPhysCannon::PuntVPhysics( CBaseEntity *pEntity, const Vector &vecFor
 {
 	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
 
-
 	if ( m_hLastPuntedObject == pEntity && gpGlobals->curtime < m_flRepuntObjectTime )
 		return;
 
@@ -1663,6 +1671,8 @@ void CWeaponPhysCannon::PuntVPhysics( CBaseEntity *pEntity, const Vector &vecFor
 	pEntity->DispatchTraceAttack( info, forward, &tr );
 	ApplyMultiDamage();
 
+	if (pOwner)
+		pOwner->VelocityPunch(-physcannon_self_punt.GetFloat() * forward);
 
 	if ( Pickup_OnAttemptPhysGunPickup( pEntity, pOwner, PUNTED_BY_CANNON ) )
 	{
@@ -1903,8 +1913,9 @@ void CWeaponPhysCannon::PrimaryAttack( void )
 			{
 				PuntNonVPhysics( pEntity, forward, tr );
 				//DryFire();
-				return;
 			}
+
+			return;
 		}
 
 		PuntNonVPhysics( pEntity, forward, tr );
@@ -1916,6 +1927,7 @@ void CWeaponPhysCannon::PrimaryAttack( void )
 			DryFire();
 			return;
 		}
+
 		PuntVPhysics( pEntity, forward, tr );
 	}
 }

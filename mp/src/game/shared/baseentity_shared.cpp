@@ -1627,6 +1627,9 @@ void CBaseEntity::FireBullets( const FireBulletsInfo_t &info )
 
 			pPlayer->RumbleEffect( rumbleEffect, 0, RUMBLE_FLAG_RESTART );
 		}
+
+		if (info.m_vecKickback != Vector())
+			pPlayer->VelocityPunch(info.m_vecKickback);
 	}
 #endif// GAME_DLL
 

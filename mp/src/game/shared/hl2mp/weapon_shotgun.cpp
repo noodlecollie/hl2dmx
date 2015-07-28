@@ -23,6 +23,10 @@
 extern ConVar sk_auto_reload_time;
 extern ConVar sk_plr_num_shotgun_pellets;
 
+ConVar shotgun_punt( "shotgun_punt", "150.0", FCVAR_REPLICATED );
+ConVar shotgun_punt2( "shotgun_punt2", "300.0", FCVAR_REPLICATED );
+
+
 class CWeaponShotgun : public CBaseHL2MPCombatWeapon
 {
 public:
@@ -319,6 +323,7 @@ void CWeaponShotgun::PrimaryAttack( void )
 
 	FireBulletsInfo_t info( 7, vecSrc, vecAiming, GetBulletSpread(), MAX_TRACE_LENGTH, m_iPrimaryAmmoType );
 	info.m_pAttacker = pPlayer;
+	info.m_vecKickback = -shotgun_punt.GetFloat() * Vector(vecAiming.x, vecAiming.y, vecAiming.z);
 
 	// Fire the bullets, and force the first shot to be perfectly accuracy
 	pPlayer->FireBullets( info );
@@ -371,6 +376,7 @@ void CWeaponShotgun::SecondaryAttack( void )
 
 	FireBulletsInfo_t info( 12, vecSrc, vecAiming, GetBulletSpread(), MAX_TRACE_LENGTH, m_iPrimaryAmmoType );
 	info.m_pAttacker = pPlayer;
+	info.m_vecKickback = -shotgun_punt2.GetFloat() * Vector(vecAiming.x, vecAiming.y, vecAiming.z);
 
 	// Fire the bullets, and force the first shot to be perfectly accuracy
 	pPlayer->FireBullets( info );

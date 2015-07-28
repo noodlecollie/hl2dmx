@@ -45,6 +45,8 @@ private:
 	CWeapon357( const CWeapon357 & );
 };
 
+ConVar revolver_kickback("revolver_kickback", "0", FCVAR_REPLICATED);
+
 IMPLEMENT_NETWORKCLASS_ALIASED( Weapon357, DT_Weapon357 )
 
 BEGIN_NETWORK_TABLE( CWeapon357, DT_Weapon357 )
@@ -129,6 +131,7 @@ void CWeapon357::PrimaryAttack( void )
 
 	FireBulletsInfo_t info( 1, vecSrc, vecAiming, vec3_origin, MAX_TRACE_LENGTH, m_iPrimaryAmmoType );
 	info.m_pAttacker = pPlayer;
+	info.m_vecKickback = -revolver_kickback.GetFloat() * vecAiming;
 
 	// Fire the bullets, and force the first shot to be perfectly accuracy
 	pPlayer->FireBullets( info );

@@ -3941,7 +3941,8 @@ void CGameMovement::CheckFalling( void )
 				//
 				bAlive = MoveHelper( )->PlayerFallingDamage();
 
-				player->DoStomp(player->GetGroundEntity());
+				if (player->GetGroundEntity())
+					player->DoStomp(player->GetGroundEntity());
 
 				fvol = 1.0;
 			}

@@ -1550,7 +1550,7 @@ CHL2MPPlayerStateInfo *CHL2MP_Player::State_LookupInfo( HL2MPPlayerState state )
 
 void CHL2MP_Player::DoStomp(CBaseEntity* ent)
 {
-	CTakeDamageInfo *cDamageInfo = new CTakeDamageInfo( this, this, NULL, 100.0f, DMG_ALWAYSGIB );
+	CTakeDamageInfo *cDamageInfo = new CTakeDamageInfo( this, this, NULL, 300, DMG_ALWAYSGIB );
 	ent->TakeDamage(*cDamageInfo);
 	DevMsg ( "Landed hard on %s.", ent->GetClassname() );
 }
