@@ -267,6 +267,7 @@ void C_HL2MP_Player::ClientThink( void )
 
 	UpdateIDTarget();
 
+#ifdef GLOWS_ENABLE
 	// NEW: Highlight pickup-able weapons.
 	// We find nearby weapons here and add them to the list if they are valid.
 	// We then iterate over the list to set or unset the glow.
@@ -344,6 +345,7 @@ void C_HL2MP_Player::ClientThink( void )
 
 	// Prune the list.
 	if ( removed ) PruneGlowWeapons();
+#endif
 }
 
 bool C_HL2MP_Player::EntityWithinGlowRange(C_BaseEntity* e)
