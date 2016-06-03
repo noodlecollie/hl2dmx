@@ -28,6 +28,7 @@ ipch
 *.sln
 *.vcxproj.filters
 *.vcxproj.vpc_crc
+*.sentinel
 
 # OSX/Linux build products
 *.mak
