@@ -503,6 +503,7 @@ $Project
 		//Haptics
 		$File	"$SRCDIR\public\haptics\haptic_msgs.cpp"	[!$X360]
 		$File	"$SRCDIR\public\haptics\haptic_utils.cpp"	[$WIN32&&!$X360]
+		$File	"$SRCDIR\game\client\c_item.cpp"
 
 		$Folder	"Sixense"
 		{
@@ -1101,6 +1102,7 @@ $Project
 		//Haptics
 		$File   "$SRCDIR\public\haptics\ihaptics.h"	[$WIN32]
 		$File   "$SRCDIR\public\haptics\haptic_utils.h"	[$WIN32]
+		$File	"$SRCDIR\game\client\c_item.h"
 	}
 
 	$Folder	"Game Shared Header Files"
