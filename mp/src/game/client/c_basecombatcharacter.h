@@ -110,10 +110,10 @@ public:
 
 protected:
 
-//#ifdef GLOWS_ENABLE	
-//	virtual void		UpdateGlowEffect( void );
-//	virtual void		DestroyGlowEffect( void );
-//#endif // GLOWS_ENABLE
+#ifdef GLOWS_ENABLE	
+	virtual void		UpdateGlowEffect( void );
+	virtual void		DestroyGlowEffect( void );
+#endif // GLOWS_ENABLE
 
 	int			m_bloodColor;			// color of blood particless
 
@@ -125,20 +125,12 @@ private:
 	CHandle<C_BaseCombatWeapon>		m_hMyWeapons[MAX_WEAPONS];
 	CHandle< C_BaseCombatWeapon > m_hActiveWeapon;
 
-<<<<<<< HEAD
-//#ifdef GLOWS_ENABLE
-//	bool				m_bGlowEnabled;
-//	bool				m_bOldGlowEnabled;
-//	CGlowObject			*m_pGlowEffect;
-//#endif // GLOWS_ENABLE
-=======
 #ifdef GLOWS_ENABLE
 	bool				m_bClientSideGlowEnabled;	// client-side only value used for spectator
 	bool				m_bGlowEnabled;				// networked value
 	bool				m_bOldGlowEnabled;
 	CGlowObject			*m_pGlowEffect;
 #endif // GLOWS_ENABLE
->>>>>>> upstream/master
 
 private:
 	C_BaseCombatCharacter( const C_BaseCombatCharacter & ); // not defined, not accessible
