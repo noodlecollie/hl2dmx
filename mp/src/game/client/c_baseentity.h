@@ -37,6 +37,7 @@
 #include "tier0/threadtools.h"
 
 // NEW: Moving glow enable to C_BaseEntity.
+#define GLOWS_ENABLE
 #ifdef GLOWS_ENABLE
 #include "glow_outline_effect.h"
 #endif // GLOWS_ENABLE
