@@ -14,7 +14,9 @@ class C_HL2MP_Player;
 #include "hl2mp_player_shared.h"
 #include "beamdraw.h"
 
+#ifdef GLOWS_ENABLE
 #define MAX_GLOW_WEAPONS 16
+#endif
 
 //=============================================================================
 // >> HL2MP_Player
@@ -130,6 +132,7 @@ private:
 
 	bool m_fIsWalking;
 
+#ifdef GLOWS_ENABLE
 	// Forget mucking about with hash tables
 	EHANDLE m_GlowWeapons[MAX_GLOW_WEAPONS];
 	int m_iGlowWeaponCount;
@@ -138,6 +141,7 @@ private:
 	void PruneGlowWeapons();
 	void RemoveGlowWeapon(int i);
 	bool EntityWithinGlowRange(C_BaseEntity* e);
+#endif // GLOWS_ENABLE
 };
 
 inline C_HL2MP_Player *ToHL2MPPlayer( CBaseEntity *pEntity )

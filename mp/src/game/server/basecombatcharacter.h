@@ -412,12 +412,12 @@ public:
 	// -----------------------
 	virtual void		OnPursuedBy( INextBot * RESTRICT pPursuer ){} // called every frame while pursued by a bot in DirectChase.
 
-//#ifdef GLOWS_ENABLE
-//	// Glows
-//	void				AddGlowEffect( void );
-//	void				RemoveGlowEffect( void );
-//	bool				IsGlowEffectActive( void );
-//#endif // GLOWS_ENABLE
+#ifdef GLOWS_ENABLE
+	// Glows
+	void				AddGlowEffect( void );
+	void				RemoveGlowEffect( void );
+	bool				IsGlowEffectActive( void );
+#endif // GLOWS_ENABLE
 
 #ifdef INVASION_DLL
 public:

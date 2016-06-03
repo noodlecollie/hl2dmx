@@ -43,9 +43,9 @@ C_BaseCombatCharacter::C_BaseCombatCharacter()
 //-----------------------------------------------------------------------------
 C_BaseCombatCharacter::~C_BaseCombatCharacter()
 {
-//#ifdef GLOWS_ENABLE
-//	DestroyGlowEffect();
-//#endif // GLOWS_ENABLE
+#ifdef GLOWS_ENABLE
+	DestroyGlowEffect();
+#endif // GLOWS_ENABLE
 }
 
 /*
@@ -65,9 +65,9 @@ void C_BaseCombatCharacter::OnPreDataChanged( DataUpdateType_t updateType )
 {
 	BaseClass::OnPreDataChanged( updateType );
 
-//#ifdef GLOWS_ENABLE
-//	m_bOldGlowEnabled = m_bGlowEnabled;
-//#endif // GLOWS_ENABLE
+#ifdef GLOWS_ENABLE
+	m_bOldGlowEnabled = m_bGlowEnabled;
+#endif // GLOWS_ENABLE
 }
 
 //-----------------------------------------------------------------------------
@@ -77,12 +77,12 @@ void C_BaseCombatCharacter::OnDataChanged( DataUpdateType_t updateType )
 {
 	BaseClass::OnDataChanged( updateType );
 
-//#ifdef GLOWS_ENABLE
-//	if ( m_bOldGlowEnabled != m_bGlowEnabled )
-//	{
-//		UpdateGlowEffect();
-//	}
-//#endif // GLOWS_ENABLE
+#ifdef GLOWS_ENABLE
+	if ( m_bOldGlowEnabled != m_bGlowEnabled )
+	{
+		UpdateGlowEffect();
+	}
+#endif // GLOWS_ENABLE
 }
 
 //-----------------------------------------------------------------------------
@@ -178,9 +178,9 @@ BEGIN_RECV_TABLE(C_BaseCombatCharacter, DT_BaseCombatCharacter)
 	RecvPropDataTable( "bcc_localdata", 0, 0, &REFERENCE_RECV_TABLE(DT_BCCLocalPlayerExclusive) ),
 	RecvPropEHandle( RECVINFO( m_hActiveWeapon ) ),
 	RecvPropArray3( RECVINFO_ARRAY(m_hMyWeapons), RecvPropEHandle( RECVINFO( m_hMyWeapons[0] ) ) ),
-//#ifdef GLOWS_ENABLE
-//	RecvPropBool( RECVINFO( m_bGlowEnabled ) ),
-//#endif // GLOWS_ENABLE
+#ifdef GLOWS_ENABLE
+	RecvPropBool( RECVINFO( m_bGlowEnabled ) ),
+#endif // GLOWS_ENABLE
 
 #ifdef INVASION_CLIENT_DLL
 	RecvPropInt( RECVINFO( m_iPowerups ) ),

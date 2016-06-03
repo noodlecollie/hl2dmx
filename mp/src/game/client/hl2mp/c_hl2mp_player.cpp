@@ -41,12 +41,15 @@ END_PREDICTION_DATA()
 #define	HL2_WALK_SPEED 150
 #define	HL2_NORM_SPEED 190
 #define	HL2_SPRINT_SPEED 320
-#define NEARBY_WEAPON_GLOW_RADIUS 180
 
 static ConVar cl_playermodel( "cl_playermodel", "none", FCVAR_USERINFO | FCVAR_ARCHIVE | FCVAR_SERVER_CAN_EXECUTE, "Default Player Model");
 static ConVar cl_autosprint( "cl_autosprint", "0", FCVAR_USERINFO, "Autosprint");
 static ConVar cl_defaultweapon( "cl_defaultweapon", "weapon_physcannon", FCVAR_USERINFO | FCVAR_ARCHIVE, "Default Spawn Weapon");
-static ConVar cl_weapon_glow( "cl_weapon_glow", "1", FCVAR_ARCHIVE | FCVAR_CLIENTDLL, "Whether nearby weapon pickups should have an outline glow.");
+
+#ifdef GLOWS_ENABLE
+#define NEARBY_WEAPON_GLOW_RADIUS 180
+static ConVar cl_weapon_glow("cl_weapon_glow", "1", FCVAR_ARCHIVE | FCVAR_CLIENTDLL, "Whether nearby weapon pickups should have an outline glow.");
+#endif
 
 void SpawnBlood (Vector vecSpot, const Vector &vecDir, int bloodColor, float flDamage);
 
@@ -348,6 +351,7 @@ void C_HL2MP_Player::ClientThink( void )
 #endif
 }
 
+#ifdef GLOWS_ENABLE
 bool C_HL2MP_Player::EntityWithinGlowRange(C_BaseEntity* e)
 {
 	Vector org = EyePosition();
@@ -404,6 +408,7 @@ bool C_HL2MP_Player::IsCachedGlowWeapon(const EHANDLE &e) const
 
 	return false;
 }
+#endif // GLOWS_ENABLE
 
 //-----------------------------------------------------------------------------
 // Purpose: 

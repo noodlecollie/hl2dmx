@@ -15,9 +15,9 @@
 #include "shareddefs.h"
 #include "c_baseflex.h"
 
-//#ifdef GLOWS_ENABLE
-//#include "glow_outline_effect.h"
-//#endif // GLOWS_ENABLE
+#ifdef GLOWS_ENABLE
+#include "glow_outline_effect.h"
+#endif // GLOWS_ENABLE
 
 class C_BaseCombatWeapon;
 class C_WeaponCombatShield;
