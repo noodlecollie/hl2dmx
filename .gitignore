@@ -30,6 +30,14 @@ ipch
 *.vcxproj.vpc_crc
 *.sentinel
 
+# Vim
+*.swp
+*~
+
+# Qt helper project files
+# These are just to make programming in Qt Creator easier
+*.pro
+
 # OSX/Linux build products
 *.mak
 *.mak.vpc_crc
